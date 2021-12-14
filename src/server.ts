@@ -1,14 +1,37 @@
-import express from 'express'
+import 'reflect-metadata';
+import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import { resolvers } from '../prisma/generated/type-graphql'
+import { PrismaClient } from '@prisma/client';
+
+const bootstrap = async () => {
+
+  const prisma = new PrismaClient()
+
+  const schema = await buildSchema({
+  resolvers,
+  validate: false,
+  })
+
+  const apolloserver = new ApolloServer({
+    schema, 
+    context: () => ({prisma})
+  });
+
+  await apolloserver.start()
+
+  const app = express()
 
 
-const app = express()
+  apolloserver.applyMiddleware({app})
 
-app.listen(3000, () => console.log('Server up'))
+  app.listen(3000, () => console.log('Server up'))
 
-app.get('/', (req, res) => {
+}
 
-  res.send('Welcome to the flitter backend API')
+bootstrap()
 
-})
+
 
 
