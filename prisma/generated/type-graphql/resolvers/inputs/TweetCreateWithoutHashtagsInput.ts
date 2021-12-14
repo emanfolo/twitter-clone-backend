@@ -1,0 +1,30 @@
+import * as TypeGraphQL from "type-graphql";
+import * as GraphQLScalars from "graphql-scalars";
+import { Prisma } from "@prisma/client";
+import { DecimalJSScalar } from "../../scalars";
+import { UserCreateNestedOneWithoutTweetsInput } from "../inputs/UserCreateNestedOneWithoutTweetsInput";
+
+@TypeGraphQL.InputType("TweetCreateWithoutHashtagsInput", {
+  isAbstract: true
+})
+export class TweetCreateWithoutHashtagsInput {
+  @TypeGraphQL.Field(_type => String, {
+    nullable: false
+  })
+  contents!: string;
+
+  @TypeGraphQL.Field(_type => Date, {
+    nullable: true
+  })
+  createdAt?: Date | undefined;
+
+  @TypeGraphQL.Field(_type => String, {
+    nullable: true
+  })
+  image?: string | undefined;
+
+  @TypeGraphQL.Field(_type => UserCreateNestedOneWithoutTweetsInput, {
+    nullable: false
+  })
+  user!: UserCreateNestedOneWithoutTweetsInput;
+}

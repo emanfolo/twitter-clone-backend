@@ -2,12 +2,13 @@
   "name": "twitter-clone-backend",
   "version": "1.0.0",
   "description": "Twitter clone backend made using TypeScript, GraphQL, Node.js & PostgresQL",
-  "main": "src/server.ts",
+  "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "tsc & node .",
-    "dev": "tsc -w & nodemon ."
+    "dev": "tsc -w & nodemon .",
+    "seed": "tsc & node dist/seed.js"
   },
   "repository": {
     "type": "git",

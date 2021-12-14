@@ -7,6 +7,7 @@ generator client {
 
 generator typegraphql {
   provider = "typegraphql-prisma"
+  output   = "../prisma/generated/type-graphql"
 }
 
 datasource db {
@@ -17,5 +18,46 @@ datasource db {
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
-  name  String?
+  name  String
+  username String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tweets Tweet[]
+  profile Profile?
 }
+
+model Profile {
+  id Int @id @default(autoincrement())
+  image String ? 
+  header_image String ? 
+  bio String ? @db.VarChar(280)
+  userID Int
+  user User @relation(fields: [userID], references: [id])
+}
+
+model Tweet {
+  id Int @id @default(autoincrement())
+  contents String @db.VarChar(280)
+  createdAt DateTime @default(now())
+  image String ? 
+  userID Int
+  user User @relation(fields: [userID], references:[id])
+  // hashtags HashtagsOnTweets []
+  hashtags Hashtag[] @relation(references: [id])
+}
+
+model Hashtag {
+  id Int @id @default(autoincrement())
+  contents String
+  // tweets HashtagsOnTweets []
+  tweets Tweet[] @relation(references: [id])
+}
+
+// model HashtagsOnTweets {
+//   hashtag Hashtag @relation(fields: [hashtagID], references: [id])
+//   hashtagID Int
+//   tweet Tweet @relation(fields: [tweetID], references: [id])
+//   tweetID Int
+
+//   @@id([hashtagID, tweetID])
+// }
