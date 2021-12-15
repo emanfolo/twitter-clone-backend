@@ -5,6 +5,8 @@ import { DecimalJSScalar } from "../../scalars";
 import { DateTimeFieldUpdateOperationsInput } from "../inputs/DateTimeFieldUpdateOperationsInput";
 import { ProfileUpdateOneWithoutUserInput } from "../inputs/ProfileUpdateOneWithoutUserInput";
 import { StringFieldUpdateOperationsInput } from "../inputs/StringFieldUpdateOperationsInput";
+import { UserUpdateManyWithoutFollowedByInput } from "../inputs/UserUpdateManyWithoutFollowedByInput";
+import { UserUpdateManyWithoutFollowingInput } from "../inputs/UserUpdateManyWithoutFollowingInput";
 
 @TypeGraphQL.InputType("UserUpdateWithoutTweetsInput", {
   isAbstract: true
@@ -14,6 +16,11 @@ export class UserUpdateWithoutTweetsInput {
     nullable: true
   })
   email?: StringFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field(_type => StringFieldUpdateOperationsInput, {
+    nullable: true
+  })
+  password?: StringFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field(_type => StringFieldUpdateOperationsInput, {
     nullable: true
@@ -39,4 +46,14 @@ export class UserUpdateWithoutTweetsInput {
     nullable: true
   })
   profile?: ProfileUpdateOneWithoutUserInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserUpdateManyWithoutFollowingInput, {
+    nullable: true
+  })
+  followedBy?: UserUpdateManyWithoutFollowingInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserUpdateManyWithoutFollowedByInput, {
+    nullable: true
+  })
+  following?: UserUpdateManyWithoutFollowedByInput | undefined;
 }

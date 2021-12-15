@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { DecimalJSScalar } from "../../scalars";
 import { ProfileOrderByWithRelationInput } from "../inputs/ProfileOrderByWithRelationInput";
 import { TweetOrderByRelationAggregateInput } from "../inputs/TweetOrderByRelationAggregateInput";
+import { UserOrderByRelationAggregateInput } from "../inputs/UserOrderByRelationAggregateInput";
 import { SortOrder } from "../../enums/SortOrder";
 
 @TypeGraphQL.InputType("UserOrderByWithRelationInput", {
@@ -19,6 +20,11 @@ export class UserOrderByWithRelationInput {
     nullable: true
   })
   email?: "asc" | "desc" | undefined;
+
+  @TypeGraphQL.Field(_type => SortOrder, {
+    nullable: true
+  })
+  password?: "asc" | "desc" | undefined;
 
   @TypeGraphQL.Field(_type => SortOrder, {
     nullable: true
@@ -40,13 +46,23 @@ export class UserOrderByWithRelationInput {
   })
   updatedAt?: "asc" | "desc" | undefined;
 
+  @TypeGraphQL.Field(_type => ProfileOrderByWithRelationInput, {
+    nullable: true
+  })
+  profile?: ProfileOrderByWithRelationInput | undefined;
+
   @TypeGraphQL.Field(_type => TweetOrderByRelationAggregateInput, {
     nullable: true
   })
   tweets?: TweetOrderByRelationAggregateInput | undefined;
 
-  @TypeGraphQL.Field(_type => ProfileOrderByWithRelationInput, {
+  @TypeGraphQL.Field(_type => UserOrderByRelationAggregateInput, {
     nullable: true
   })
-  profile?: ProfileOrderByWithRelationInput | undefined;
+  followedBy?: UserOrderByRelationAggregateInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserOrderByRelationAggregateInput, {
+    nullable: true
+  })
+  following?: UserOrderByRelationAggregateInput | undefined;
 }

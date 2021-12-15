@@ -11,4 +11,14 @@ export class UserCount {
     nullable: false
   })
   tweets!: number;
+
+  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+    nullable: false
+  })
+  followedBy!: number;
+
+  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+    nullable: false
+  })
+  following!: number;
 }

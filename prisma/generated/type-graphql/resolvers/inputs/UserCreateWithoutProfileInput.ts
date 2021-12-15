@@ -3,6 +3,8 @@ import * as GraphQLScalars from "graphql-scalars";
 import { Prisma } from "@prisma/client";
 import { DecimalJSScalar } from "../../scalars";
 import { TweetCreateNestedManyWithoutUserInput } from "../inputs/TweetCreateNestedManyWithoutUserInput";
+import { UserCreateNestedManyWithoutFollowedByInput } from "../inputs/UserCreateNestedManyWithoutFollowedByInput";
+import { UserCreateNestedManyWithoutFollowingInput } from "../inputs/UserCreateNestedManyWithoutFollowingInput";
 
 @TypeGraphQL.InputType("UserCreateWithoutProfileInput", {
   isAbstract: true
@@ -12,6 +14,11 @@ export class UserCreateWithoutProfileInput {
     nullable: false
   })
   email!: string;
+
+  @TypeGraphQL.Field(_type => String, {
+    nullable: false
+  })
+  password!: string;
 
   @TypeGraphQL.Field(_type => String, {
     nullable: false
@@ -37,4 +44,14 @@ export class UserCreateWithoutProfileInput {
     nullable: true
   })
   tweets?: TweetCreateNestedManyWithoutUserInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserCreateNestedManyWithoutFollowingInput, {
+    nullable: true
+  })
+  followedBy?: UserCreateNestedManyWithoutFollowingInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserCreateNestedManyWithoutFollowedByInput, {
+    nullable: true
+  })
+  following?: UserCreateNestedManyWithoutFollowedByInput | undefined;
 }

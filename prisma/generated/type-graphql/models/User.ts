@@ -23,6 +23,11 @@ export class User {
   @TypeGraphQL.Field(_type => String, {
     nullable: false
   })
+  password!: string;
+
+  @TypeGraphQL.Field(_type => String, {
+    nullable: false
+  })
   name!: string;
 
   @TypeGraphQL.Field(_type => String, {
@@ -40,9 +45,13 @@ export class User {
   })
   updatedAt!: Date;
 
+  profile?: Profile | null;
+
   tweets?: Tweet[];
 
-  profile?: Profile | null;
+  followedBy?: User[];
+
+  following?: User[];
 
   @TypeGraphQL.Field(_type => UserCount, {
     nullable: true

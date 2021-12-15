@@ -4,29 +4,26 @@ import { Prisma } from "@prisma/client";
 import { DecimalJSScalar } from "../../scalars";
 import { DateTimeFilter } from "../inputs/DateTimeFilter";
 import { IntFilter } from "../inputs/IntFilter";
-import { ProfileRelationFilter } from "../inputs/ProfileRelationFilter";
 import { StringFilter } from "../inputs/StringFilter";
-import { TweetListRelationFilter } from "../inputs/TweetListRelationFilter";
-import { UserListRelationFilter } from "../inputs/UserListRelationFilter";
 
-@TypeGraphQL.InputType("UserWhereInput", {
+@TypeGraphQL.InputType("UserScalarWhereInput", {
   isAbstract: true
 })
-export class UserWhereInput {
-  @TypeGraphQL.Field(_type => [UserWhereInput], {
+export class UserScalarWhereInput {
+  @TypeGraphQL.Field(_type => [UserScalarWhereInput], {
     nullable: true
   })
-  AND?: UserWhereInput[] | undefined;
+  AND?: UserScalarWhereInput[] | undefined;
 
-  @TypeGraphQL.Field(_type => [UserWhereInput], {
+  @TypeGraphQL.Field(_type => [UserScalarWhereInput], {
     nullable: true
   })
-  OR?: UserWhereInput[] | undefined;
+  OR?: UserScalarWhereInput[] | undefined;
 
-  @TypeGraphQL.Field(_type => [UserWhereInput], {
+  @TypeGraphQL.Field(_type => [UserScalarWhereInput], {
     nullable: true
   })
-  NOT?: UserWhereInput[] | undefined;
+  NOT?: UserScalarWhereInput[] | undefined;
 
   @TypeGraphQL.Field(_type => IntFilter, {
     nullable: true
@@ -62,24 +59,4 @@ export class UserWhereInput {
     nullable: true
   })
   updatedAt?: DateTimeFilter | undefined;
-
-  @TypeGraphQL.Field(_type => ProfileRelationFilter, {
-    nullable: true
-  })
-  profile?: ProfileRelationFilter | undefined;
-
-  @TypeGraphQL.Field(_type => TweetListRelationFilter, {
-    nullable: true
-  })
-  tweets?: TweetListRelationFilter | undefined;
-
-  @TypeGraphQL.Field(_type => UserListRelationFilter, {
-    nullable: true
-  })
-  followedBy?: UserListRelationFilter | undefined;
-
-  @TypeGraphQL.Field(_type => UserListRelationFilter, {
-    nullable: true
-  })
-  following?: UserListRelationFilter | undefined;
 }

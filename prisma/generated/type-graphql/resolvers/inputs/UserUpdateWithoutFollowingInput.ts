@@ -3,15 +3,15 @@ import * as GraphQLScalars from "graphql-scalars";
 import { Prisma } from "@prisma/client";
 import { DecimalJSScalar } from "../../scalars";
 import { DateTimeFieldUpdateOperationsInput } from "../inputs/DateTimeFieldUpdateOperationsInput";
+import { ProfileUpdateOneWithoutUserInput } from "../inputs/ProfileUpdateOneWithoutUserInput";
 import { StringFieldUpdateOperationsInput } from "../inputs/StringFieldUpdateOperationsInput";
 import { TweetUpdateManyWithoutUserInput } from "../inputs/TweetUpdateManyWithoutUserInput";
-import { UserUpdateManyWithoutFollowedByInput } from "../inputs/UserUpdateManyWithoutFollowedByInput";
 import { UserUpdateManyWithoutFollowingInput } from "../inputs/UserUpdateManyWithoutFollowingInput";
 
-@TypeGraphQL.InputType("UserUpdateWithoutProfileInput", {
+@TypeGraphQL.InputType("UserUpdateWithoutFollowingInput", {
   isAbstract: true
 })
-export class UserUpdateWithoutProfileInput {
+export class UserUpdateWithoutFollowingInput {
   @TypeGraphQL.Field(_type => StringFieldUpdateOperationsInput, {
     nullable: true
   })
@@ -42,6 +42,11 @@ export class UserUpdateWithoutProfileInput {
   })
   updatedAt?: DateTimeFieldUpdateOperationsInput | undefined;
 
+  @TypeGraphQL.Field(_type => ProfileUpdateOneWithoutUserInput, {
+    nullable: true
+  })
+  profile?: ProfileUpdateOneWithoutUserInput | undefined;
+
   @TypeGraphQL.Field(_type => TweetUpdateManyWithoutUserInput, {
     nullable: true
   })
@@ -51,9 +56,4 @@ export class UserUpdateWithoutProfileInput {
     nullable: true
   })
   followedBy?: UserUpdateManyWithoutFollowingInput | undefined;
-
-  @TypeGraphQL.Field(_type => UserUpdateManyWithoutFollowedByInput, {
-    nullable: true
-  })
-  following?: UserUpdateManyWithoutFollowedByInput | undefined;
 }

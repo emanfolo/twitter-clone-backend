@@ -3,13 +3,13 @@ import * as GraphQLScalars from "graphql-scalars";
 import { Prisma } from "@prisma/client";
 import { DecimalJSScalar } from "../../scalars";
 import { ProfileCreateNestedOneWithoutUserInput } from "../inputs/ProfileCreateNestedOneWithoutUserInput";
-import { UserCreateNestedManyWithoutFollowedByInput } from "../inputs/UserCreateNestedManyWithoutFollowedByInput";
+import { TweetCreateNestedManyWithoutUserInput } from "../inputs/TweetCreateNestedManyWithoutUserInput";
 import { UserCreateNestedManyWithoutFollowingInput } from "../inputs/UserCreateNestedManyWithoutFollowingInput";
 
-@TypeGraphQL.InputType("UserCreateWithoutTweetsInput", {
+@TypeGraphQL.InputType("UserCreateWithoutFollowingInput", {
   isAbstract: true
 })
-export class UserCreateWithoutTweetsInput {
+export class UserCreateWithoutFollowingInput {
   @TypeGraphQL.Field(_type => String, {
     nullable: false
   })
@@ -45,13 +45,13 @@ export class UserCreateWithoutTweetsInput {
   })
   profile?: ProfileCreateNestedOneWithoutUserInput | undefined;
 
+  @TypeGraphQL.Field(_type => TweetCreateNestedManyWithoutUserInput, {
+    nullable: true
+  })
+  tweets?: TweetCreateNestedManyWithoutUserInput | undefined;
+
   @TypeGraphQL.Field(_type => UserCreateNestedManyWithoutFollowingInput, {
     nullable: true
   })
   followedBy?: UserCreateNestedManyWithoutFollowingInput | undefined;
-
-  @TypeGraphQL.Field(_type => UserCreateNestedManyWithoutFollowedByInput, {
-    nullable: true
-  })
-  following?: UserCreateNestedManyWithoutFollowedByInput | undefined;
 }

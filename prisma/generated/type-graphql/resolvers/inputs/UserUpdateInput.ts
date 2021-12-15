@@ -6,6 +6,8 @@ import { DateTimeFieldUpdateOperationsInput } from "../inputs/DateTimeFieldUpdat
 import { ProfileUpdateOneWithoutUserInput } from "../inputs/ProfileUpdateOneWithoutUserInput";
 import { StringFieldUpdateOperationsInput } from "../inputs/StringFieldUpdateOperationsInput";
 import { TweetUpdateManyWithoutUserInput } from "../inputs/TweetUpdateManyWithoutUserInput";
+import { UserUpdateManyWithoutFollowedByInput } from "../inputs/UserUpdateManyWithoutFollowedByInput";
+import { UserUpdateManyWithoutFollowingInput } from "../inputs/UserUpdateManyWithoutFollowingInput";
 
 @TypeGraphQL.InputType("UserUpdateInput", {
   isAbstract: true
@@ -15,6 +17,11 @@ export class UserUpdateInput {
     nullable: true
   })
   email?: StringFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field(_type => StringFieldUpdateOperationsInput, {
+    nullable: true
+  })
+  password?: StringFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field(_type => StringFieldUpdateOperationsInput, {
     nullable: true
@@ -36,13 +43,23 @@ export class UserUpdateInput {
   })
   updatedAt?: DateTimeFieldUpdateOperationsInput | undefined;
 
+  @TypeGraphQL.Field(_type => ProfileUpdateOneWithoutUserInput, {
+    nullable: true
+  })
+  profile?: ProfileUpdateOneWithoutUserInput | undefined;
+
   @TypeGraphQL.Field(_type => TweetUpdateManyWithoutUserInput, {
     nullable: true
   })
   tweets?: TweetUpdateManyWithoutUserInput | undefined;
 
-  @TypeGraphQL.Field(_type => ProfileUpdateOneWithoutUserInput, {
+  @TypeGraphQL.Field(_type => UserUpdateManyWithoutFollowingInput, {
     nullable: true
   })
-  profile?: ProfileUpdateOneWithoutUserInput | undefined;
+  followedBy?: UserUpdateManyWithoutFollowingInput | undefined;
+
+  @TypeGraphQL.Field(_type => UserUpdateManyWithoutFollowedByInput, {
+    nullable: true
+  })
+  following?: UserUpdateManyWithoutFollowedByInput | undefined;
 }
