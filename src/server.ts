@@ -26,7 +26,7 @@ const bootstrap = async () => {
 
   apolloserver.applyMiddleware({app})
 
-  app.listen(3000, () => console.log('Server up'))
+  app.listen(4000, () => console.log('Server up'))
 
 }
 
