@@ -1,38 +1,17 @@
-import 'reflect-metadata';
 import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import { resolvers } from '../prisma/generated/type-graphql'
-import { PrismaClient } from '@prisma/client';
 import userRouter from '../routes/user'
 
-const bootstrap = async () => {
+const app = express()
+app.use('/user', userRouter)
 
-  const prisma = new PrismaClient()
+app.get('/', (req: any, res: any) => {
+  res.send('Welcome to the Flitter api')
+})
 
-  const schema = await buildSchema({
-  resolvers,
-  validate: false,
-  })
+app.listen(4000, () => console.log('Server up'))
 
-  const apolloserver = new ApolloServer({
-    schema, 
-    context: () => ({prisma})
-  });
 
-  await apolloserver.start()
 
-  const app = express()
-
-  apolloserver.applyMiddleware({app})
-
-  app.use('/user', userRouter)
-  
-  app.listen(4000, () => console.log('Server up'))
-
-}
-
-bootstrap()
 
 
 

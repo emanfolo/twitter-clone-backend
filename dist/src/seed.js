@@ -20,6 +20,7 @@ const seedDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const user1 = yield prisma.user.create({
         data: {
             email: 'fakeemail@gmail.com',
+            password: 'password',
             name: 'eman',
             username: 'emanf',
             profile: {
@@ -47,7 +48,46 @@ const seedDB = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     });
+    const user2 = yield prisma.user.create({
+        data: {
+            email: '419email@gmail.com',
+            password: 'password',
+            name: 'emans opp',
+            username: 'emansopp',
+            profile: {
+                create: {
+                    bio: 'dont trust the process',
+                    image: 'https://media.pitchfork.com/photos/5c7d4c1b4101df3df85c41e5/1:1/w_320/Dababy_BabyOnBaby.jpg',
+                    header_image: 'https://allhiphop.com/wp-content/uploads/2020/12/dababy-1-1-960x628.jpg.webp'
+                }
+            },
+            tweets: {
+                create: [
+                    {
+                        contents: 'My profile pic is da baby'
+                    },
+                    {
+                        contents: 'but I dont F with da baby'
+                    },
+                    {
+                        contents: 'hashtag #testing #flitter',
+                        hashtags: {
+                            create: [{ contents: 'testing' }, { contents: 'flitter' }]
+                        }
+                    },
+                ]
+            },
+            following: {
+                connect: [
+                    {
+                        id: user1.id
+                    }
+                ]
+            }
+        }
+    });
     console.log({ user1 });
+    console.log({ user2 });
 });
 seedDB()
     .catch(e => console.error(e))

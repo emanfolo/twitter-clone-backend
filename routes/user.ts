@@ -20,8 +20,6 @@ const router = express.Router()
 router.use(express.json())
 router.use(cors(options))
 
-
-
 router.get('/', (req:any , res:any) => {
 
   res.send('User endpoint')
@@ -69,7 +67,15 @@ router.post('/register', async (req: RegistrationRequest, res: any) =>{
 
 })
 
-router.post('/login', async (req:any, res:any) => {
+interface LoginRequest {
+  body: {
+    email: string, 
+    password: string
+  }
+  
+}
+
+router.post('/login', async (req:LoginRequest, res:any) => {
 
  
     let userObject = await prisma.user.findUnique({
@@ -92,26 +98,6 @@ router.post('/login', async (req:any, res:any) => {
       res.console.error();
       ('No user matches this email')
     }
-
-
-    // if(userObject){
-    //   {
-    //   return result
-    //   })
-    // }
-
-    
-
-
-  // if(await checkPassword()){
-    
-  // }
-
-  // const username = req.body.username
-  // const user = { name: username}
-
-  // const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-  // res.json({accessToken: accessToken})
 
 })
 
