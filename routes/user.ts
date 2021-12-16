@@ -77,7 +77,6 @@ interface LoginRequest {
 
 router.post('/login', async (req:LoginRequest, res:any) => {
 
- 
     let userObject = await prisma.user.findUnique({
       where: {
         email: req.body.email
