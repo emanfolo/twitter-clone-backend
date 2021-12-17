@@ -32,42 +32,61 @@ const authenticateToken = (req: any, res:any, next:any) => {
 
 router.get('/', authenticateToken, async (req:any , res:any) => {
 
-  const tweets = await prisma.tweet.findMany({
+  const tweets = await prisma.user.findUnique({
+    where: {
+      id: req.user.id
+    }, 
     select: {
-      id: true,
-      contents: true,
-      createdAt: true,
-      image: true,
-      user: {
+      tweets: true,
+      following: {
         select: {
-          id: true,
-          email: true,
-          name: true,
-          username: true,
-          profile: {
-            select: {
-              id: true,
-              image: true,
-              header_image: true,
-              bio: true
-            }
-          },
-          followedBy: {
-            select: {
-              id: true,
-              username: true
-            }
-          },
-          following:  {
-            select: {
-              id: true,
-              username: true
-            }
-          }
+          tweets: true
         }
       }
     }
   })
+
+  // const tweets = await prisma.tweet.findMany({
+  //   where: {
+  //     userID:{
+
+  //     }
+  //   },
+  //   select: {
+  //     id: true,
+  //     contents: true,
+  //     createdAt: true,
+  //     image: true,
+  //     user: {
+  //       select: {
+  //         id: true,
+  //         email: true,
+  //         name: true,
+  //         username: true,
+  //         profile: {
+  //           select: {
+  //             id: true,
+  //             image: true,
+  //             header_image: true,
+  //             bio: true
+  //           }
+  //         },
+  //         followedBy: {
+  //           select: {
+  //             id: true,
+  //             username: true
+  //           }
+  //         },
+  //         following:  {
+  //           select: {
+  //             id: true,
+  //             username: true
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
 
   res.send(tweets)
 
