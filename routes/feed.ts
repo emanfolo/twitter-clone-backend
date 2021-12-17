@@ -32,61 +32,64 @@ const authenticateToken = (req: any, res:any, next:any) => {
 
 router.get('/', authenticateToken, async (req:any , res:any) => {
 
-  const tweets = await prisma.user.findUnique({
+  const feedArray: Array<number> = [req.user.id]
+
+
+  const userAndFollowing = await prisma.user.findUnique({
     where: {
       id: req.user.id
-    }, 
+    },
     select: {
-      tweets: true,
-      following: {
+      following: true
+    }
+  })
+
+  const addFollowingToFeed = async (userAndFollowing:any) => {
+    userAndFollowing.following.forEach(element => {
+      feedArray.push(element.id)
+    });
+  }
+
+  addFollowingToFeed(userAndFollowing)
+
+
+  const tweets = await prisma.tweet.findMany({
+    where: {
+      userID: { in: feedArray },
+    },
+    select: {
+      id: true,
+      contents: true,
+      createdAt: true,
+      image: true,
+      user: {
         select: {
-          tweets: true
+          id: true,
+          name: true,
+          username: true,
+          profile: true,
+          followedBy: {
+            select: {
+              id: true,
+              username: true
+            }
+          },
+          following:  {
+            select: {
+              id: true,
+              username: true
+            }
+          }
+        }
+      },
+      hashtags: {
+        select: {
+          id: true,
+          contents: true,
         }
       }
     }
   })
-
-  // const tweets = await prisma.tweet.findMany({
-  //   where: {
-  //     userID:{
-
-  //     }
-  //   },
-  //   select: {
-  //     id: true,
-  //     contents: true,
-  //     createdAt: true,
-  //     image: true,
-  //     user: {
-  //       select: {
-  //         id: true,
-  //         email: true,
-  //         name: true,
-  //         username: true,
-  //         profile: {
-  //           select: {
-  //             id: true,
-  //             image: true,
-  //             header_image: true,
-  //             bio: true
-  //           }
-  //         },
-  //         followedBy: {
-  //           select: {
-  //             id: true,
-  //             username: true
-  //           }
-  //         },
-  //         following:  {
-  //           select: {
-  //             id: true,
-  //             username: true
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // })
 
   res.send(tweets)
 

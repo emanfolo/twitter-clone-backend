@@ -137,7 +137,7 @@ router.post('/login', async (req:LoginRequest, res:any) => {
         res.console.error();
         ('Wrong password')
       }
-    } else if (!userObject) {
+    } else if (userObject == undefined || null) {
       res.console.error();
       ('No user matches this email')
     }
