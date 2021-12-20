@@ -11,40 +11,40 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  password String 
-  name  String
-  username String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  profile Profile?
-  tweets Tweet[]
-  followedBy User[]  @relation("UserFollows", references: [id])
-  following  User[]  @relation("UserFollows", references: [id])
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  name       String
+  username   String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  profile    Profile?
+  tweets     Tweet[]
+  followedBy User[]   @relation("UserFollows", references: [id])
+  following  User[]   @relation("UserFollows", references: [id])
 }
 
 model Profile {
-  id Int @id @default(autoincrement())
-  image String ? 
-  header_image String ? 
-  bio String ? @db.VarChar(280)
-  userID Int
-  user User @relation(fields: [userID], references: [id])
+  id           Int     @id @default(autoincrement())
+  image        String?
+  header_image String?
+  bio          String? @db.VarChar(280)
+  userID       Int     @unique
+  user         User    @relation(fields: [userID], references: [id])
 }
 
 model Tweet {
-  id Int @id @default(autoincrement())
-  contents String @db.VarChar(280)
-  createdAt DateTime @default(now())
-  image String ? 
-  userID Int
-  user User @relation(fields: [userID], references:[id])
-  hashtags Hashtag[] @relation(references: [id])
+  id        Int       @id @default(autoincrement())
+  contents  String    @db.VarChar(280)
+  createdAt DateTime  @default(now())
+  image     String?
+  userID    Int
+  user      User      @relation(fields: [userID], references: [id])
+  hashtags  Hashtag[] @relation(references: [id])
 }
 
 model Hashtag {
-  id Int @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   contents String
-  tweets Tweet[] @relation(references: [id])
+  tweets   Tweet[] @relation(references: [id])
 }
