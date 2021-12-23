@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import cors  from 'cors'
 import * as dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import hashtagFinder from '../utils/hashtagFinder'
 
 dotenv.config({path: '../.env'})
 
@@ -43,8 +44,28 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
     }
   })
 
-  res.send(newTweet)
+  const createHashtags = await hashtagFinder(newTweet.contents, newTweet.id)
 
+  const createdTweetAndHashtags = await prisma.tweet.findUnique({
+    where: {
+      id: newTweet.id
+    }, 
+    select: {
+      id: true,
+      contents: true,
+      createdAt: true,
+      image: true,
+      userID: true,
+      hashtags: {
+        select: {
+          id: true,
+          contents: true,
+        }
+      }
+    }
+  })
+
+  res.send(createdTweetAndHashtags)
 
 })
 
