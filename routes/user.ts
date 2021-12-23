@@ -46,7 +46,6 @@ const parseUserDetails = async (user) => {
 let refreshTokens: string[] = []
 
 router.post('/token', (req: any, res:any) => {
-  console.log(refreshTokens)
   const refreshToken = req.body.token
   if (refreshToken == null) return res.sendStatus(401)
   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
@@ -70,7 +69,6 @@ interface RegistrationRequest {
 router.post('/register', async (req: RegistrationRequest, res: any) =>{
 
   if(req.body.email){
-      console.log(req.body.email)
 
     const hashedPassword = await bcryptjs.hash(req.body.password, 12)
 
@@ -150,7 +148,6 @@ router.post('/login', async (req:LoginRequest, res:any) => {
 
 router.delete('/logout', (req, res) => {
   // Eventually will delete refreshtoken from DB (REDIS?)
-  console.log(refreshTokens)
   refreshTokens = refreshTokens.filter(token => token !== req.body.token)
   res.sendStatus(204)
 })

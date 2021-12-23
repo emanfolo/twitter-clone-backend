@@ -57,6 +57,9 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
     where: {
       userID: { in: feedArray },
     },
+    orderBy: {
+      createdAt: "desc"
+    },
     select: {
       id: true,
       contents: true,
