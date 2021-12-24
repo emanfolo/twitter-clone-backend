@@ -57,6 +57,12 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
             }
           }
         }
+      },
+      hashtags: {
+        select: {
+          id: true,
+          contents: true,
+        }
       }
     }
   })
