@@ -3,12 +3,16 @@ import userRouter from '../routes/user'
 import feedRouter from '../routes/feed'
 import profileRouter from '../routes/profile'
 import tweetRouter from '../routes/tweet'
+import hashtagRouter from '../routes/hashtag'
+
 
 const app = express()
 app.use('/user', userRouter)
 app.use('/feed', feedRouter)
 app.use('/profile', profileRouter)
 app.use('/tweet', tweetRouter)
+app.use('/hashtag', hashtagRouter)
+
 
 
 app.get('/', (req: any, res: any) => {
