@@ -23,6 +23,7 @@ model User {
   followedBy User[]   @relation("UserFollows", references: [id])
   following  User[]   @relation("UserFollows", references: [id])
   likes Like[]
+  mentions Mention[]
 }
 
 model Profile {
@@ -42,7 +43,8 @@ model Tweet {
   userID    Int
   user      User      @relation(fields: [userID], references: [id])
   hashtags  Hashtag[] @relation(references: [id])
-  likes Like []
+  likes Like [] 
+  mentions Mention[] @relation(references: [id])
 }
 
 model Hashtag {
@@ -57,4 +59,11 @@ model Like {
   user      User      @relation(fields: [userID], references: [id])
   tweetID Int 
   tweet Tweet @relation(fields: [tweetID], references: [id])
+}
+
+model Mention {
+  id Int @id @default(autoincrement())
+  username String @unique
+  user User @relation(fields: [username], references: [username])
+  tweets Tweet [] @relation(references: [id])
 }
