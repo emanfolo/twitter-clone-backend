@@ -45,6 +45,9 @@ model Tweet {
   hashtags  Hashtag[] @relation(references: [id])
   likes Like [] 
   mentions Mention[] @relation(references: [id])
+  threadSuccessorID Int?
+  threadSuccessor Tweet? @relation("TweetReply", fields: [threadSuccessorID], references: [id])
+  threadPredecessor Tweet? @relation("TweetReply")
 }
 
 model Hashtag {
