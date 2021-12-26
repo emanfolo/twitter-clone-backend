@@ -33,7 +33,11 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
           }
         }
       }
-    },select: {
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    select: {
       id: true,
       contents: true,
       createdAt: true,
