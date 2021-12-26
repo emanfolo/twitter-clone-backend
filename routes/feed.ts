@@ -90,7 +90,72 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
           id: true,
           contents: true,
         }
-      }
+      }, 
+      likes: {
+        select: {
+          id: true, 
+          userID: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              followedBy: {
+                select: {
+                  id: true,
+                  username: true
+                }
+              },
+              following: {
+                select: {
+                  id: true,
+                  username: true
+                }
+              },
+              profile: {
+                select: {
+                  image: true,
+                  header_image: true,
+                  bio: true
+                }
+              }
+            }
+          }
+        }
+      },
+      retweets: {
+        select: {
+          id: true, 
+          userID: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              followedBy: {
+                select: {
+                  id: true,
+                  username: true
+                }
+              },
+              following: {
+                select: {
+                  id: true,
+                  username: true
+                }
+              },
+              profile: {
+                select: {
+                  image: true,
+                  header_image: true,
+                  bio: true
+                }
+              }
+            }
+          }
+        }
+      }, 
+      threadSuccessorID: true
     }
   })
 
