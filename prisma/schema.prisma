@@ -41,10 +41,19 @@ model Tweet {
   userID    Int
   user      User      @relation(fields: [userID], references: [id])
   hashtags  Hashtag[] @relation(references: [id])
+  // likes Like [] @relation(references: [id])
 }
 
 model Hashtag {
   id       Int     @id @default(autoincrement())
-  contents String
+  contents String  @unique
   tweets   Tweet[] @relation(references: [id])
 }
+
+// model Like {
+//   id Int @id @default(autoincrement())
+//   userID    Int
+//   user      User      @relation(fields: [userID], references: [id])
+//   // tweetID Int 
+//   tweets Tweet[] @relation(fields: [tweetID], references: [id])
+// }

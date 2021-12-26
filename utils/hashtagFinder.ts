@@ -11,27 +11,45 @@ const hashtagFinder = async (tweet: string, tweetID: number) => {
 
   const array = hashTags.flat()
 
-  for (let i = 0; i < array.length; i++) {
+  if (array && array.length > 0) {
+
     const addHashtags = await prisma.tweet.update({
+      data: {
+        hashtags: {
+          connectOrCreate: array.map((tag) => {
+            return {
+              create: { contents: tag},
+              where: { contents: tag },
+            };
+          }),
+        }
+      },
       where: {
         id: tweetID,
       },
-      data: {
-        hashtags: {
-          create: { 
-            contents: array[i],
-          }
-        }
-      }
     })
+
   }
 
-  // const createdHashtags = await prisma.tweet.findUnique({
-  //   where: {
-  //     id: tweetID,
-      
-  //   }
-  // })
+  // for (let i = 0; i < array.length; i++) {
+    
+  //   const addHashtags = await prisma.tweet.update({
+  //     where: {
+  //       id: tweetID,
+  //     },
+  //     data: {
+  //       hashtags: {
+  //         // create: { 
+  //         //   contents: array[i],
+  //         // }
+  //         connectOrCreate: {
+  //           create: {contents: array[i]}, 
+  //           where: { id: 4 }
+  //         }
+  //       }
+  //     }
+  //   })
+  // }
 }
 
 export default hashtagFinder

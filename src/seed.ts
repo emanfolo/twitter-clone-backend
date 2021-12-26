@@ -37,7 +37,16 @@ const seedDB =  async () => {
           {
             contents: 'testing out the hashtags #testing #flitter',
             hashtags: {
-              create: [{contents: 'testing'}, {contents: 'flitter'}]
+              connectOrCreate: [
+                {
+                  where: {contents: '#testing'},
+                  create: {contents: '#testing'}
+                },
+                {
+                  where: {contents: '#flitter'},
+                  create: {contents: '#flitter'}
+                },
+              ]
             }
           },
         ]
@@ -75,7 +84,16 @@ const seedDB =  async () => {
           {
             contents: 'hashtag #testing #flitter',
             hashtags: {
-              create: [{contents: 'testing'}, {contents: 'flitter'}]
+              connectOrCreate: [
+                {
+                  where: {contents: '#testing'},
+                  create: {contents: '#testing'}
+                },
+                {
+                  where: {contents: '#flitter'},
+                  create: {contents: '#flitter'}
+                },
+              ]
             }
           },
         ]
@@ -117,7 +135,16 @@ const seedDB =  async () => {
           {
             contents: 'hashtag #testing #flitter',
             hashtags: {
-              create: [{contents: 'testing'}, {contents: 'flitter'}]
+              connectOrCreate: [
+                {
+                  where: {contents: '#testing'},
+                  create: {contents: '#testing'}
+                },
+                {
+                  where: {contents: '#flitter'},
+                  create: {contents: '#flitter'}
+                },
+              ]
             }
           },
         ]
@@ -158,7 +185,16 @@ const seedDB =  async () => {
           {
             contents: 'testing out the hashtags #testing #flitter',
             hashtags: {
-              create: [{contents: 'testing'}, {contents: 'flitter'}]
+              connectOrCreate: [
+                {
+                  where: {contents: '#testing'},
+                  create: {contents: '#testing'}
+                },
+                {
+                  where: {contents: '#flitter'},
+                  create: {contents: '#flitter'}
+                },
+              ]
             }
           },
         ]
