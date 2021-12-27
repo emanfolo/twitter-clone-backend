@@ -34,7 +34,15 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
   const newLike = await prisma.like.create({
     data: {
       userID: req.user.id,
-      tweetID: req.body.tweetID
+      tweetID: req.body.tweetID,
+    }
+  })
+
+  const addNotification = await prisma.notification.create({
+    data: {
+      likeID: newLike.id,
+      type: 'Like',
+      recipientID: req.body.notificationRecipient
     }
   })
 
@@ -51,6 +59,8 @@ router.post('/delete', authenticateToken, async (req: any, res:any) => {
       }
     }
   })
+
+//  delete notification soon
 
   res.send(deletedLike)
 })

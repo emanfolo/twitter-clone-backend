@@ -24,7 +24,8 @@ model User {
   followedBy User[]   @relation("UserFollows", references: [id])
   following  User[]   @relation("UserFollows", references: [id])
   likes Like[]
-  mentions Mention[]
+  mentions Mention[] 
+  notificationsReceived Notification [] 
 }
 
 model Profile {
@@ -58,7 +59,9 @@ model Retweet {
   user      User      @relation(fields: [userID], references: [id])
   tweetID Int 
   tweet Tweet @relation(fields: [tweetID], references: [id])
+  createdAt DateTime  @default(now())
   @@unique([userID, tweetID], name: "TweetRetweetUserID")
+  notification Notification?
 }
 
 model Hashtag {
@@ -73,7 +76,10 @@ model Like {
   user      User      @relation(fields: [userID], references: [id])
   tweetID Int 
   tweet Tweet @relation(fields: [tweetID], references: [id])
+  createdAt DateTime  @default(now())
   @@unique([userID, tweetID], name: "TweetLikeUserID")
+  notification Notification?
+
 }
 
 model Mention {
@@ -81,4 +87,19 @@ model Mention {
   username String @unique
   user User @relation(fields: [username], references: [username])
   tweets Tweet [] @relation(references: [id])
+  notification Notification?
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  recipientID Int 
+  recipient User @relation( fields: [recipientID], references: [id])
+  type String
+  mentionID Int?
+  mention Mention? @relation(fields: [mentionID], references: [id])
+  likeID Int?
+  like Like? @relation(fields: [likeID], references: [id])
+  retweetID Int?
+  retweet Retweet? @relation(fields: [retweetID], references: [id])
 }
