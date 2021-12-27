@@ -4,6 +4,7 @@ import feedRouter from '../routes/feed'
 import profileRouter from '../routes/profile'
 import tweetRouter from '../routes/tweet'
 import hashtagRouter from '../routes/hashtag'
+import likeRouter from '../routes/like'
 
 
 const app = express()
@@ -12,6 +13,7 @@ app.use('/feed', feedRouter)
 app.use('/profile', profileRouter)
 app.use('/tweet', tweetRouter)
 app.use('/hashtag', hashtagRouter)
+app.use('/like', likeRouter)
 
 
 

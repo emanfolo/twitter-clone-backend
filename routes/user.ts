@@ -28,7 +28,7 @@ router.get('/', (req:any , res:any) => {
 
 
 const generateAccessToken = (user) => {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h'})
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h'})
 }
 
 const parseUserDetails = async (user) => {

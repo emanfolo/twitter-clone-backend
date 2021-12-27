@@ -58,6 +58,7 @@ model Retweet {
   user      User      @relation(fields: [userID], references: [id])
   tweetID Int 
   tweet Tweet @relation(fields: [tweetID], references: [id])
+  @@unique([userID, tweetID], name: "TweetRetweetUserID")
 }
 
 model Hashtag {
@@ -72,6 +73,7 @@ model Like {
   user      User      @relation(fields: [userID], references: [id])
   tweetID Int 
   tweet Tweet @relation(fields: [tweetID], references: [id])
+  @@unique([userID, tweetID], name: "TweetLikeUserID")
 }
 
 model Mention {

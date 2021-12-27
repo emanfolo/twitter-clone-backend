@@ -49,9 +49,37 @@ router.use((0, cors_1.default)(options));
 router.get('/', (req, res) => {
     res.send('User endpoint');
 });
+const generateAccessToken = (user) => {
+    return jsonwebtoken_1.default.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+};
+const parseUserDetails = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    let details = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        createdAt: user.createdAt
+    };
+    return details;
+});
+//Store in redis soon
+let refreshTokens = [];
+router.post('/token', (req, res) => {
+    const refreshToken = req.body.token;
+    if (refreshToken == null)
+        return res.sendStatus(401);
+    if (!refreshTokens.includes(refreshToken))
+        return res.sendStatus(403);
+    jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err)
+            return res.sendStatus(403);
+        delete user.iat;
+        const accessToken = generateAccessToken(user);
+        res.json({ accessToken: accessToken });
+    });
+});
 router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.body.email) {
-        console.log(req.body.email);
         const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 12);
         const newUser = yield prisma.user.create({
             data: {
@@ -68,14 +96,22 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
                 }
             }
         });
-        const accessToken = jsonwebtoken_1.default.sign(newUser, process.env.ACCESS_TOKEN_SECRET);
-        res.json({ userDetails: newUser, accessToken: accessToken });
+        // const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
+        const accessToken = generateAccessToken(newUser);
+        const refreshToken = jsonwebtoken_1.default.sign(newUser, process.env.REFRESH_TOKEN_SECRET);
+        //Store in redis soon
+        refreshTokens.push(refreshToken);
+        const userDetails = yield parseUserDetails(newUser);
+        res.json({ userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken });
     }
     else {
         res.send('Error please try again');
     }
 }));
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // const userExists: boolean = prisma.$exists.user({
+    //   id: 'cjli6tko8005t0a23fid7kke7',
+    // })
     let userObject = yield prisma.user.findUnique({
         where: {
             email: req.body.email
@@ -84,18 +120,28 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (userObject) {
         const match = yield bcryptjs_1.default.compare(req.body.password, userObject.password);
         if (match) {
-            const accessToken = jsonwebtoken_1.default.sign(userObject, process.env.ACCESS_TOKEN_SECRET);
-            res.json({ accessToken: accessToken });
+            // const accessToken = jwt.sign(userObject, process.env.ACCESS_TOKEN_SECRET)
+            const accessToken = generateAccessToken(userObject);
+            const refreshToken = jsonwebtoken_1.default.sign(userObject, process.env.REFRESH_TOKEN_SECRET);
+            //Store in redis soon
+            refreshTokens.push(refreshToken);
+            const userDetails = yield parseUserDetails(userObject);
+            res.json({ userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken });
         }
         else if (!match) {
             res.console.error();
             ('Wrong password');
         }
     }
-    else if (!userObject) {
+    else if (userObject == undefined || null) {
         res.console.error();
         ('No user matches this email');
     }
 }));
+router.delete('/logout', (req, res) => {
+    // Eventually will delete refreshtoken from DB (REDIS?)
+    refreshTokens = refreshTokens.filter(token => token !== req.body.token);
+    res.sendStatus(204);
+});
 exports.default = router;
 //# sourceMappingURL=user.js.map
