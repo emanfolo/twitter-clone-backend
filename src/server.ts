@@ -5,6 +5,7 @@ import profileRouter from '../routes/profile'
 import tweetRouter from '../routes/tweet'
 import hashtagRouter from '../routes/hashtag'
 import likeRouter from '../routes/like'
+import retweetRouter from '../routes/retweet'
 
 
 const app = express()
@@ -14,6 +15,7 @@ app.use('/profile', profileRouter)
 app.use('/tweet', tweetRouter)
 app.use('/hashtag', hashtagRouter)
 app.use('/like', likeRouter)
+app.use('/retweet', retweetRouter)
 
 
 
