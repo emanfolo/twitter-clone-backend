@@ -47,9 +47,9 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
       recipientID: req.body.notificationRecipient
     }
     })
-  }
+  }  
   
-  res.sendStatus(400)
+  res.sendStatus(204)
 })
 
 router.post('/delete', authenticateToken, async (req: any, res:any) => {
