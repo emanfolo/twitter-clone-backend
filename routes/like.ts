@@ -31,6 +31,7 @@ const authenticateToken = (req: any, res:any, next:any) => {
 }
 
 router.post('/new', authenticateToken, async (req: any, res:any) => {
+
   const newLike = await prisma.like.create({
     data: {
       userID: req.user.id,
@@ -38,31 +39,63 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
     }
   })
 
-  const addNotification = await prisma.notification.create({
+  if (req.user.id != req.body.notificationRecipient){
+    const addNotification = await prisma.notification.create({
     data: {
       likeID: newLike.id,
       type: 'Like',
       recipientID: req.body.notificationRecipient
     }
-  })
-
-  res.send(newLike)
+    })
+  }
+  
+  res.sendStatus(400)
 })
 
 router.post('/delete', authenticateToken, async (req: any, res:any) => {
 
-  const deletedLike = await prisma.like.delete({
+  const like = await prisma.like.findUnique({
     where: {
       TweetLikeUserID: {
         userID: req.user.id , 
         tweetID: req.body.tweetID 
       }
+    }, 
+      select: {
+        id: true
+      }
+    })
+
+
+  if (like){
+
+    if (req.user.id != req.body.notificationRecipient){
+      const deleteNotification = await prisma.like.update({
+        where: {
+          id: like.id
+        },
+        data: {
+          notification: {
+            delete: true,
+          }
+        }
+      })
+    }
+    
+    
+    const deletedLike = await prisma.like.delete({
+    where: {
+      id: like.id
     }
   })
 
-//  delete notification soon
-
-  res.send(deletedLike)
+  res.sendStatus(204)
+  
+  } else {
+    res.send('There has been an error, please try again')
+    res.sendStatus(404)
+  }
+  
 })
 
 export default router

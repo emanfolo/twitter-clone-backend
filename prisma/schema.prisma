@@ -51,6 +51,7 @@ model Tweet {
   threadSuccessorID Int?
   threadSuccessor Tweet? @relation("TweetReply", fields: [threadSuccessorID], references: [id])
   threadPredecessor Tweet? @relation("TweetReply")
+  notification Notification?
 }
 
 model Retweet {
@@ -102,4 +103,6 @@ model Notification {
   like Like? @relation(fields: [likeID], references: [id])
   retweetID Int?
   retweet Retweet? @relation(fields: [retweetID], references: [id])
+  replyID Int?
+  reply Tweet? @relation(fields: [replyID], references: [id])
 }
