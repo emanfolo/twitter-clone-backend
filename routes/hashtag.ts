@@ -23,13 +23,15 @@ interface HashtagRequest {
 
 router.get('/:contents', async (req: HashtagRequest, res: any) => {
 
-  const tweetsByHashtag = await prisma.tweet.findMany({
+  const feedByHashtag = await prisma.feedItem.findMany({
     where: {
-      hashtags: {
-        some: {
-          contents: {
-            contains: req.params.contents,
-            mode: 'insensitive'
+      tweet: {
+        hashtags: {
+          some: {
+            contents: {
+              contains: req.params.contents,
+              mode: 'insensitive'
+            }
           }
         }
       }
@@ -37,41 +39,51 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
     orderBy: {
       createdAt: "desc"
     },
-    select: {
+        select: {
       id: true,
-      contents: true,
-      createdAt: true,
-      image: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          profile: true,
-          followedBy: {
-            select: {
-              id: true,
-              username: true
-            }
-          },
-          following:  {
-            select: {
-              id: true,
-              username: true
-            }
-          }
-        }
-      },
-      hashtags: {
-        select: {
+      type: true,
+      tweet: {
+        select:{
           id: true,
           contents: true,
+          createdAt: true,
+          image: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              profile: {
+                select: {
+                  image: true,
+                  header_image: true,
+                  bio: true,
+                }
+              }
+            }
+          },
+          retweets: true,
+          likes: true,
+          hashtags: true,
+          mentions: true,
+          threadSuccessor: true,
+          threadPredecessor: true
+        }
+      },
+      retweet: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
         }
       }
     }
   })
 
-  res.send(tweetsByHashtag)
+  res.send(feedByHashtag)
 
 })
 
