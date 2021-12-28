@@ -32,7 +32,7 @@ const seedDB =  async () => {
       tweets: {
         create: [
           {
-            contents: 'this is my first tweet'
+            contents: 'this is my first tweet',
           },
           {
             contents: 'this is my second tweet'
@@ -56,8 +56,6 @@ const seedDB =  async () => {
       }
     }
   });
-
-
   
 
   const hashedPassword2 = await bcryptjs.hash('password', 12)

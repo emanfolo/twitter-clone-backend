@@ -32,153 +32,6 @@ const authenticateToken = (req: any, res:any, next:any) => {
 
 router.get('/:username', async (req:any, res:any) => {
 
-  // const userFeed = prisma.tweet.findMany({
-  //   where: {
-  //     OR:[
-  //       {
-  //       user: {
-  //         username: {
-  //           contains: req.params.username
-  //         }
-  //       }
-  //     }, 
-  //     retweets: {
-  //       userID: {
-  //         contains: 14
-  //       }
-  //     }
-
-  //     ]
-  //   },
-  // })
-  
-  // const userTweets = await prisma.tweet.findMany({
-  //   where: {
-  //     user: {
-  //       username: {
-  //         contains: req.params.username
-  //       }
-  //     }
-  //   },
-  //   select: {
-  //     id: true,
-  //     user: {
-  //       select: {
-  //         id: true,
-  //         name: true,
-  //         username: true,
-  //         profile: {
-  //           select: {
-  //             id: true,
-  //             image: true,
-  //             header_image: true,
-  //             bio: true
-  //           }
-  //         },
-  //       }
-  //     },
-  //     contents: true,
-  //     image: true,
-  //     createdAt: true, 
-  //     retweets: {
-  //       select: {
-  //         id: true,
-  //         tweetID: true,
-  //         userID: true
-  //       }
-  //     },
-  //     likes: {
-  //       select: {
-  //         id: true,
-  //         tweetID: true,
-  //         userID: true
-  //       }
-  //     },
-  //     threadSuccessorID: true
-  //   }
-  // })
-
-  // const userRetweets = await prisma.retweet.findMany({
-  //   where: {
-  //     user: {
-  //       username: {
-  //         contains: req.params.username
-  //       }
-  //     }
-  //   }, 
-  //   select: {
-  //     id: true, 
-  //     createdAt: true,
-  //     user: {
-  //       select:{
-  //       name: true,
-  //       username: true,
-  //       profile: {
-  //         select: {
-  //           image: true,
-  //           header_image: true,
-  //           bio: true,
-  //         }
-  //       }
-  //       }
-  //     },
-  //     tweet: {
-  //       select: {
-  //         id: true,
-  //         contents: true,
-  //         createdAt: true,
-  //         image: true,
-  //         retweets: {
-  //           select: {
-  //             id: true,
-  //             tweetID: true,
-  //             userID: true
-  //             }
-  //           },
-  //         likes: {
-  //           select: {
-  //             id: true,
-  //             tweetID: true,
-  //             userID: true
-  //           }
-  //         },
-  //         user: {
-  //           select: {
-  //             id: true,
-  //             name: true,
-  //             username: true,
-  //             profile: {
-  //               select: {
-  //                 id: true,
-  //                 image: true,
-  //                 header_image: true,
-  //                 bio: true
-  //               }
-  //             },
-  //             followedBy: {
-  //             select: {
-  //               id: true,
-  //               username: true
-  //               } 
-  //             },
-  //             following:  {
-  //               select: {
-  //                 id: true,
-  //                 username: true
-  //               }
-  //             }
-  //           }
-  //         },
-  //        threadSuccessorID: true
-  //       }
-  //     }
-  //   }
-  // })
-
-  // const individualFeed = [...userTweets, ...userRetweets]
-
-  // res.send(individualFeed)
-
   const user = await prisma.user.findUnique({
     where: {
       username: req.params.username
@@ -267,114 +120,58 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
 
   addFollowingToFeed(userAndFollowing)
 
-
-  const tweets = await prisma.tweet.findMany({
+  const feed = await prisma.feedItem.findMany({
     where: {
-      userID: { in: feedArray },
+      userID: { in: feedArray }
     },
     orderBy: {
       createdAt: "desc"
     },
     select: {
       id: true,
-      contents: true,
-      createdAt: true,
-      image: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          profile: true,
-          followedBy: {
-            select: {
-              id: true,
-              username: true
-            }
-          },
-          following:  {
-            select: {
-              id: true,
-              username: true
-            }
-          }
-        }
-      },
-      hashtags: {
-        select: {
+      type: true,
+      tweet: {
+        select:{
           id: true,
           contents: true,
-        }
-      }, 
-      likes: {
-        select: {
-          id: true, 
-          userID: true,
+          createdAt: true,
+          image: true,
           user: {
             select: {
               id: true,
               name: true,
               username: true,
-              followedBy: {
-                select: {
-                  id: true,
-                  username: true
-                }
-              },
-              following: {
-                select: {
-                  id: true,
-                  username: true
-                }
-              },
               profile: {
                 select: {
                   image: true,
                   header_image: true,
-                  bio: true
+                  bio: true,
                 }
               }
             }
-          }
+          },
+          retweets: true,
+          likes: true,
+          hashtags: true,
+          mentions: true,
+          threadSuccessor: true,
+          threadPredecessor: true
         }
       },
-      retweets: {
+      retweet: {
         select: {
-          id: true, 
-          userID: true,
           user: {
             select: {
               id: true,
-              name: true,
-              username: true,
-              followedBy: {
-                select: {
-                  id: true,
-                  username: true
-                }
-              },
-              following: {
-                select: {
-                  id: true,
-                  username: true
-                }
-              },
-              profile: {
-                select: {
-                  image: true,
-                  header_image: true,
-                  bio: true
-                }
-              }
+              name: true
             }
           }
         }
-      }, 
-      threadSuccessorID: true
+      }
     }
   })
 
-  res.send(tweets)
+  res.send(feed)
 
 })
 
