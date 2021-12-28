@@ -7,6 +7,7 @@ import hashtagRouter from '../routes/hashtag'
 import likeRouter from '../routes/like'
 import retweetRouter from '../routes/retweet'
 import searchRouter from '../routes/search'
+import trendingRouter from '../routes/trending'
 
 
 
@@ -19,6 +20,7 @@ app.use('/hashtag', hashtagRouter)
 app.use('/like', likeRouter)
 app.use('/retweet', retweetRouter)
 app.use('/search', searchRouter)
+app.use('/trending', trendingRouter)
 
 
 
