@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 const seedDB =  async () => {
   await prisma.$connect();
-
+  await prisma.feedItem.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.like.deleteMany();
+  await prisma.retweet.deleteMany();
   await prisma.hashtag.deleteMany();
   await prisma.tweet.deleteMany();
   await prisma.profile.deleteMany();
@@ -18,7 +21,7 @@ const seedDB =  async () => {
       email: 'fakeemail@gmail.com',
       password: hashedPassword,
       name: 'im another bot', 
-      username: 'bot365',
+      username: 'bot365',  
       profile: {
         create: {
           bio: 'android 17',

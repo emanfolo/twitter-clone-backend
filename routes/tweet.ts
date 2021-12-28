@@ -44,6 +44,14 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
     }
   })
 
+  const addToFeed = await prisma.feedItem.create({
+    data: {
+      type: "Tweet", 
+      tweetID: newTweet.id,
+      userID: req.user.id
+    }
+  })
+
   const createHashtags = await hashtagFinder(newTweet.contents, newTweet.id)
 
   const createdTweetAndHashtags = await prisma.tweet.findUnique({

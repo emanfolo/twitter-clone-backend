@@ -26,6 +26,7 @@ model User {
   likes Like[]
   mentions Mention[] 
   notificationsReceived Notification [] 
+  feedItems FeedItem[]
 }
 
 model Profile {
@@ -35,6 +36,18 @@ model Profile {
   bio          String? @db.VarChar(280)
   userID       Int     @unique
   user         User    @relation(fields: [userID], references: [id])
+}
+
+model FeedItem {
+  id  Int     @id @default(autoincrement())
+  userID Int
+  user User @relation(fields: [userID], references: [id])
+  type String
+  tweetID Int?
+  tweet Tweet? @relation(fields: [tweetID], references: [id])
+  retweetID Int?
+  retweet Retweet? @relation(fields: [retweetID], references: [id])
+  createdAt DateTime  @default(now())
 }
 
 model Tweet {
@@ -52,6 +65,7 @@ model Tweet {
   threadSuccessor Tweet? @relation("TweetReply", fields: [threadSuccessorID], references: [id])
   threadPredecessor Tweet? @relation("TweetReply")
   notification Notification?
+  feedItem FeedItem?
 }
 
 model Retweet {
@@ -63,6 +77,7 @@ model Retweet {
   createdAt DateTime  @default(now())
   @@unique([userID, tweetID], name: "TweetRetweetUserID")
   notification Notification?
+  feedItem FeedItem?
 }
 
 model Hashtag {

@@ -47,6 +47,16 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
       recipientID: req.body.notificationRecipient
     }
     })
+
+    const addToFeed = await prisma.feedItem.create({
+    data: {
+      type: "Retweet", 
+      tweetID: newRetweet.tweetID,
+      retweetID: newRetweet.id,
+      userID: req.user.id
+    }
+  })
+
   }  
   
   res.sendStatus(204)
@@ -70,18 +80,20 @@ router.post('/delete', authenticateToken, async (req: any, res:any) => {
   if (retweet){
 
     if (req.user.id != req.body.notificationRecipient){
-      const deleteNotification = await prisma.retweet.update({
+      const deleteNotificationAndFeedItem = await prisma.retweet.update({
         where: {
           id: retweet.id
         },
         data: {
           notification: {
             delete: true,
+          },
+          feedItem: {
+            delete: true
           }
         }
       })
     }
-    
     
     const deletedRetweet = await prisma.retweet.delete({
     where: {
