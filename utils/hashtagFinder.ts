@@ -31,25 +31,6 @@ const hashtagFinder = async (tweet: string, tweetID: number) => {
 
   }
 
-  // for (let i = 0; i < array.length; i++) {
-    
-  //   const addHashtags = await prisma.tweet.update({
-  //     where: {
-  //       id: tweetID,
-  //     },
-  //     data: {
-  //       hashtags: {
-  //         // create: { 
-  //         //   contents: array[i],
-  //         // }
-  //         connectOrCreate: {
-  //           create: {contents: array[i]}, 
-  //           where: { id: 4 }
-  //         }
-  //       }
-  //     }
-  //   })
-  // }
 }
 
 export default hashtagFinder

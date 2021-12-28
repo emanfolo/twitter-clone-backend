@@ -65,7 +65,7 @@ model Tweet {
   threadSuccessor Tweet? @relation("TweetReply", fields: [threadSuccessorID], references: [id])
   threadPredecessor Tweet? @relation("TweetReply")
   notification Notification?
-  feedItem FeedItem?
+  feedItems FeedItem []
 }
 
 model Retweet {

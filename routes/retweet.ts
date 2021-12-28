@@ -55,7 +55,7 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
       retweetID: newRetweet.id,
       userID: req.user.id
     }
-  })
+  })   
 
   }  
   
@@ -104,7 +104,6 @@ router.post('/delete', authenticateToken, async (req: any, res:any) => {
   res.sendStatus(204)
   
   } else {
-    res.send('There has been an error, please try again')
     res.sendStatus(404)
   }
   
