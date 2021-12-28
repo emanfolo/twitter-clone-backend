@@ -6,7 +6,7 @@ import tweetRouter from '../routes/tweet'
 import hashtagRouter from '../routes/hashtag'
 import likeRouter from '../routes/like'
 import retweetRouter from '../routes/retweet'
-import exploreRouter from '../routes/explore'
+import searchRouter from '../routes/search'
 
 
 
@@ -18,7 +18,7 @@ app.use('/tweet', tweetRouter)
 app.use('/hashtag', hashtagRouter)
 app.use('/like', likeRouter)
 app.use('/retweet', retweetRouter)
-app.use('/explore', exploreRouter)
+app.use('/search', searchRouter)
 
 
 
