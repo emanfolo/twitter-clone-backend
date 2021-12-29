@@ -31,6 +31,40 @@ const authenticateToken = (req: any, res:any, next:any) => {
   })
 }
 
+router.get('/:id', async (req: any, res: any) => {
+
+  
+  const specificTweet = await prisma.tweet.findUnique({
+    where: {
+      id: parseInt(req.params.id)
+    }, select: {
+      id: true,
+      contents: true,
+      createdAt: true,
+      image: true,
+      user: {
+        select: {
+          username: true,
+          name: true, 
+          profile: {
+            select: {
+              image: true
+            }
+          }
+        }
+      },
+      hashtags: true,
+      retweets: true,
+      likes: true,
+      threadSuccessor: true,
+      threadPredecessor: true,
+    }
+  })
+
+  res.send(specificTweet)
+
+})
+
 
 router.post('/new', authenticateToken, async (req: any, res: any) => {
 

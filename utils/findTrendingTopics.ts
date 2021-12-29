@@ -36,9 +36,10 @@ const filteredTrending = Object.keys(freqMap)
     return obj;
   }, {});
 
-let topTenTrending = {};
 
 //Take the top 10 most frequent words
+
+let topTenTrending = {};
 
 
 const pickHighest = (obj, num = 10) => {
@@ -57,8 +58,6 @@ const pickHighest = (obj, num = 10) => {
 pickHighest(filteredTrending)
 
 //Return the trending topics
-
-console.log(topTenTrending)
 
 return topTenTrending
 

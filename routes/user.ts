@@ -121,7 +121,7 @@ router.post('/login', async (req:LoginRequest, res:any) => {
     let userObject = await prisma.user.findUnique({
       where: {
         email: req.body.email
-      },
+      }
     })  
 
     if(userObject){
@@ -133,7 +133,17 @@ router.post('/login', async (req:LoginRequest, res:any) => {
         const refreshToken: string = jwt.sign(userObject, process.env.REFRESH_TOKEN_SECRET)
         //Store in redis soon
         refreshTokens.push(refreshToken)
-        const userDetails = await parseUserDetails(userObject)
+        const userDetails = await prisma.user.findUnique({
+          where:{
+            id: userObject.id
+          },
+          select:{
+            id: true,
+            name: true,
+            username: true,
+            profile: true,
+          }
+        })
         res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
       } else if (!match){
         res.console.error();
