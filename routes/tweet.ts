@@ -33,7 +33,7 @@ const authenticateToken = (req: any, res:any, next:any) => {
 
 router.get('/:id', async (req: any, res: any) => {
 
-  
+
   const specificTweet = await prisma.tweet.findUnique({
     where: {
       id: parseInt(req.params.id)
@@ -69,7 +69,6 @@ router.get('/:id', async (req: any, res: any) => {
 router.post('/new', authenticateToken, async (req: any, res: any) => {
 
   // console.log(req.user)
-
   const newTweet = await prisma.tweet.create({
     data: {
       contents: req.body.contents,
