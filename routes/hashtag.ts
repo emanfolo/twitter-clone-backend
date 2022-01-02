@@ -39,7 +39,7 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
     orderBy: {
       createdAt: "desc"
     },
-        select: {
+      select: {
       id: true,
       type: true,
       tweet: {
@@ -69,21 +69,13 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
           threadSuccessor: true,
           threadPredecessor: true
         }
-      },
-      retweet: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        }
       }
     }
   })
 
   res.send(feedByHashtag)
+
+  // console.log(feedByHashtag)
 
 })
 

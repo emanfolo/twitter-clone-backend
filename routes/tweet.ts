@@ -68,6 +68,8 @@ router.get('/:id', async (req: any, res: any) => {
 
 router.post('/new', authenticateToken, async (req: any, res: any) => {
 
+
+
   // console.log(req.user)
   const newTweet = await prisma.tweet.create({
     data: {
@@ -76,6 +78,20 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
       userID: req.user.id
     }
   })
+  
+  if (req.body.replyTo){
+  const replyTo = await prisma.tweet.update({
+    where: {
+      id: req.body.replyTo
+    }, 
+    data: {
+      threadSuccessorID: newTweet.id
+    },
+  })
+
+  // Also create a notification
+}
+
 
   const addToFeed = await prisma.feedItem.create({
     data: {
@@ -106,8 +122,13 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
     }
   })
 
+
   res.send(createdTweetAndHashtags)
 
 })
+
+// router.delete('/', authenticateToken, async (req:any, res:any) => {
+//   const deleteTweet = prisma.
+// })
 
 export default router
