@@ -88,8 +88,15 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
       threadSuccessorID: newTweet.id
     },
   })
-
-  // Also create a notification
+    if (req.user.id != req.body.notificationRecipient && newTweet.id){
+      const addNotification = await prisma.notification.create({
+      data: {
+        replyID: newTweet.id,
+        type: 'Reply',    
+        recipientID: req.body.notificationRecipient
+      }
+      })
+    }
 }
 
 
