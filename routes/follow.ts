@@ -30,49 +30,33 @@ const authenticateToken = (req: any, res:any, next:any) => {
   })
 }
 
-// router.post('/new', authenticateToken, async (req: any, res: any) => {
-//   const newProfile = await prisma.profile.create({
-    
-//   })
-// })
+router.post('/new', authenticateToken, async (req:any, res:any) => {
 
-router.get('/:username', async (req:any , res:any) => {
-
-  const requestedProfile = await prisma.user.findUnique({
+  const addFollowRelation = await prisma.user.update({
     where: {
-      username: req.params.username
+      id: req.user.id
     },
-    select: {
-      name: true,
-      username: true,
-      createdAt: true,
-      profile: {
-        select: {
-          image: true,
-          header_image: true,
-          bio: true
-        }
-      },
-      followedBy: {
-            select: {
-              id: true,
-              username: true
-            }
-          },
-      following:  {
-        select: {
-          id: true,
-          username: true
+    data: {
+      following: {
+        connect: {
+          id: req.body.newFollow
         }
       }
     }
   })
 
-  if (requestedProfile){
-    res.send(requestedProfile)
-  } else {
-    res.sendStatus(404)
-  }
+  const createNotification = await prisma.notification.create({
+    data:{
+      recipientID: req.body.newFollow,
+      type: 'Follow',
+      followID: req.user.id
+    }
+  })
+
+  res.send(204)
+  
+
 })
+
 
 export default router

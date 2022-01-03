@@ -142,6 +142,8 @@ router.post('/login', async (req:LoginRequest, res:any) => {
             name: true,
             username: true,
             profile: true,
+            following: true,
+            followedBy: true,
           }
         })
         res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
