@@ -124,4 +124,7 @@ model Notification {
   reply       Tweet?   @relation(fields: [replyID], references: [id])
   followID    Int?
   follow      User?    @relation("newFollow", fields: [followID], references: [id])
+
+    @@unique([followID, recipientID], name: "newFollowID")
+
 }

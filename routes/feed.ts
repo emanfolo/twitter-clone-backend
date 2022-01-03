@@ -85,7 +85,8 @@ router.get('/:username', async (req:any, res:any) => {
           user: {
             select: {
               id: true,
-              name: true
+              name: true,
+              username: true,
             }
           }
         }
@@ -163,7 +164,8 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
           user: {
             select: {
               id: true,
-              name: true
+              name: true,
+              username: true,
             }
           }
         }

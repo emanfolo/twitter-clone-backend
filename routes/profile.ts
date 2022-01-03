@@ -43,6 +43,7 @@ router.get('/:username', async (req:any , res:any) => {
       username: req.params.username
     },
     select: {
+      id: true,
       name: true,
       username: true,
       createdAt: true,

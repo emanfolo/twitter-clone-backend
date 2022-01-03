@@ -39,7 +39,7 @@ router.post('/new', authenticateToken, async (req:any, res:any) => {
     data: {
       following: {
         connect: {
-          id: req.body.newFollow
+          id: req.body.followRecipient
         }
       }
     }
@@ -47,13 +47,43 @@ router.post('/new', authenticateToken, async (req:any, res:any) => {
 
   const createNotification = await prisma.notification.create({
     data:{
-      recipientID: req.body.newFollow,
+      recipientID: req.body.followRecipient,
       type: 'Follow',
       followID: req.user.id
     }
   })
 
-  res.send(204)
+  res.sendStatus(204)
+  
+
+})
+
+router.delete('/delete', authenticateToken, async (req:any, res:any) => {
+
+  const removeNotification = await prisma.notification.delete({
+    where: {
+      newFollowID: {
+        recipientID: req.body.followRecipient,
+        followID: req.user.id
+      }
+    }
+  })
+  
+  const removeFollowRelation = await prisma.user.update({
+    where: {
+      id: req.user.id  
+    },
+    data: {
+      following: {
+        disconnect: {
+          id: req.body.followRecipient
+        }
+      }
+    }
+  })
+
+
+  res.sendStatus(204)
   
 
 })
