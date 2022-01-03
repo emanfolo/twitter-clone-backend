@@ -9,6 +9,8 @@ import retweetRouter from '../routes/retweet'
 import searchRouter from '../routes/search'
 import trendingRouter from '../routes/trending'
 import notificationRouter from '../routes/notification'
+import followRouter from '../routes/follow'
+
 
 
 
@@ -23,6 +25,8 @@ app.use('/retweet', retweetRouter)
 app.use('/search', searchRouter)
 app.use('/trending', trendingRouter)
 app.use('/notification', notificationRouter)
+app.use('/follow', followRouter)
+
 
 
 
