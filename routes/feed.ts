@@ -69,7 +69,9 @@ router.get('/:username', async (req:any, res:any) => {
                   header_image: true,
                   bio: true,
                 }
-              }
+              },
+              followedBy: true,
+              following: true,
             }
           },
           retweets: true,
@@ -87,6 +89,8 @@ router.get('/:username', async (req:any, res:any) => {
               id: true,
               name: true,
               username: true,
+              followedBy: true,
+              following: true,
             }
           }
         }
@@ -148,7 +152,9 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
                   header_image: true,
                   bio: true,
                 }
-              }
+              }, 
+              followedBy: true,
+              following: true,
             }
           },
           retweets: true,
@@ -166,6 +172,8 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
               id: true,
               name: true,
               username: true,
+              followedBy: true,
+              following: true,
             }
           }
         }
@@ -178,4 +186,3 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
 })
 
 export default router
-

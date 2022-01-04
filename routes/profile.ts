@@ -86,10 +86,10 @@ router.post('/image/header', authenticateToken, async (req: any, res: any) => {
           profile: {
             upsert: {
               create: {
-              image: req.body.header
+              header_image: req.body.image
             },
             update: {
-              image: req.body.header
+              header_image: req.body.image
             }
           }  
           }
@@ -113,10 +113,10 @@ router.post('/image/profile', authenticateToken, async (req: any, res: any) => {
           profile: {
             upsert: {
               create: {
-              image: req.body.profile
+              image: req.body.image
             },
             update: {
-              image: req.body.profile
+              image: req.body.image
             }
           }  
           }
@@ -127,8 +127,7 @@ router.post('/image/profile', authenticateToken, async (req: any, res: any) => {
       res.sendStatus(204)
   } else {
     res.sendStatus(404)
-  }
-      
+  }      
 
 })
 
@@ -142,16 +141,21 @@ router.post('/bio', authenticateToken, async (req: any, res: any) => {
           profile: {
             upsert: {
               create: {
-              image: req.body.bio
+              bio: req.body.bio
             },
             update: {
-              image: req.body.bio
+              bio: req.body.bio
             }
           }  
          }
         }
       })
   
+  if (changeBio){
+      res.sendStatus(204)
+  } else {
+    res.sendStatus(404)
+  } 
 })
 
 export default router

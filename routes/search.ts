@@ -64,7 +64,9 @@ router.post('/', async (req:any, res: any) => {
                   header_image: true,
                   bio: true,
                 }
-              }
+              },
+              followedBy: true,
+              following: true,
             }
           },
           retweets: true,
@@ -80,7 +82,9 @@ router.post('/', async (req:any, res: any) => {
           user: {
             select: {
               id: true,
-              name: true
+              name: true,
+              followedBy: true,
+              following: true,
             }
           }
         }

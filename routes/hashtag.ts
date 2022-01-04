@@ -59,7 +59,9 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
                   header_image: true,
                   bio: true,
                 }
-              }
+              },
+              followedBy: true,
+              following: true,
             }
           },
           retweets: true,
