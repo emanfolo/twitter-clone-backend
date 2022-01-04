@@ -76,4 +76,82 @@ router.get('/:username', async (req:any , res:any) => {
   }
 })
 
+router.post('/image/header', authenticateToken, async (req: any, res: any) => {
+
+  const uploadHeaderImage = await prisma.user.update({
+        where: {
+          id: req.user.id
+        }, 
+        data: {
+          profile: {
+            upsert: {
+              create: {
+              image: req.body.header
+            },
+            update: {
+              image: req.body.header
+            }
+          }  
+          }
+        }
+      })
+
+  if (uploadHeaderImage){
+      res.sendStatus(204)
+  } else {
+    res.sendStatus(404)
+  }
+})
+
+router.post('/image/profile', authenticateToken, async (req: any, res: any) => {
+
+  const uploadProfileImage = await prisma.user.update({
+        where: {
+          id: req.user.id
+        }, 
+        data: {
+          profile: {
+            upsert: {
+              create: {
+              image: req.body.profile
+            },
+            update: {
+              image: req.body.profile
+            }
+          }  
+          }
+        }
+      })
+
+  if (uploadProfileImage){
+      res.sendStatus(204)
+  } else {
+    res.sendStatus(404)
+  }
+      
+
+})
+
+router.post('/bio', authenticateToken, async (req: any, res: any) => {
+
+  const changeBio = await prisma.user.update({
+        where: {
+          id: req.user.id
+        }, 
+        data: {
+          profile: {
+            upsert: {
+              create: {
+              image: req.body.bio
+            },
+            update: {
+              image: req.body.bio
+            }
+          }  
+         }
+        }
+      })
+  
+})
+
 export default router
