@@ -134,6 +134,38 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
 
 })
 
+router.post('/delete', authenticateToken, async (req: any, res: any) => {
+
+  const deleteRelations = await prisma.tweet.update({
+    where: {
+      id: req.body.tweetID
+    }, 
+    data: {
+      likes: {
+        deleteMany: {}
+      },
+      retweets: {
+        deleteMany: {}
+      }, 
+      mentions: {
+        deleteMany: {}
+      }, 
+      feedItems: {
+        deleteMany: {}
+      }
+    }
+  })
+
+  const deleteTweet = await prisma.tweet.delete({
+    where: {
+      id: req.body.tweetID
+    }
+  })
+
+  res.sendStatus(204)
+
+})
+
 // router.delete('/', authenticateToken, async (req:any, res:any) => {
 //   const deleteTweet = prisma.
 // })
