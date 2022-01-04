@@ -87,6 +87,17 @@ router.get('/all', authenticateToken, async (req: any, res: any) =>{
         }
       },
       reply: true,
+      follow: {
+        select: {
+          name: true,
+              username: true,
+              profile: {
+                select: {
+                  image: true
+                }
+              }
+        }
+      }
     }
   })
 
