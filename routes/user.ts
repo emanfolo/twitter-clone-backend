@@ -144,13 +144,16 @@ router.post('/login', async (req:LoginRequest, res:any) => {
             profile: true,
           }
         })
-        res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
+        if (userDetails)
+        res.json({id: userDetails.id, name: userDetails.name, 
+          username: userDetails.username, profile: userDetails.profile, 
+          accessToken: accessToken, refreshToken: refreshToken})
       } else if (!match){
         res.console.error();
         ('Wrong password')
       }
     } else if (userObject == undefined || null) {
-      res.console.error();
+      res.console.error();     
       ('No user matches this email')
     }
 

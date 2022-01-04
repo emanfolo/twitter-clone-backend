@@ -36,6 +36,40 @@ const authenticateToken = (req: any, res:any, next:any) => {
 //   })
 // })
 
+router.get('/recommended', async (req: any, res: any) => {
+
+  const profiles = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      createdAt: true,
+      profile: {
+        select: {
+          image: true,
+          header_image: true,
+          bio: true
+        }
+      },
+      followedBy: {
+            select: {
+              id: true,
+              username: true
+            }
+          },
+      following:  {
+        select: {
+          id: true,
+          username: true
+        }
+      }
+    }
+  })
+
+  res.send(profiles)
+
+})
+
 router.get('/:username', async (req:any , res:any) => {
 
   const requestedProfile = await prisma.user.findUnique({
