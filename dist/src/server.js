@@ -30,5 +30,5 @@ app.use('/follow', follow_1.default);
 app.get('/', (req, res) => {
     res.send('Welcome to the Flitter api');
 });
-app.listen(4000, () => console.log('Server up'));
+app.listen(process.env.PORT || 4000, () => console.log('Server up'));
 //# sourceMappingURL=server.js.map

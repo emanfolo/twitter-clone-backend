@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "postinstall": "npm run build",
-    "start": "node dist/index.js",
+    "start": "node dist/src/server.js",
     "deploy": "git add . && git commit -m 'Heroku' && git push",
     "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/server.ts",
     "seed": "ts-node src/seed.ts"

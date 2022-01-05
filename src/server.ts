@@ -29,16 +29,13 @@ app.use('/follow', followRouter)
 
 
 
-
-
 app.get('/', (req: any, res: any) => {
   res.send('Welcome to the Flitter api')
 })
 
-const port = 4000;
-app.listen(process.env.PORT || port, () =>
-  console.log(`Server is running on port ${port}...`)
-);
+
+app.listen( process.env.PORT || 4000, () => console.log('Server up'))
+
 
 
 
