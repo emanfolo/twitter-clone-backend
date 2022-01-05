@@ -93,13 +93,6 @@ const seedDB =  async () => {
           image: 'https://media.wired.com/photos/5b6df22751297c21002b4536/16:9/w_2400,h_1350,c_limit/HackerBot.jpg',
           header_image: 'https://cdn.searchenginejournal.com/wp-content/uploads/2020/06/47e5b89a-2b1c-4dcd-a9a8-5db0118157cb-5efbf892d137a-1520x800.jpeg'
         }
-      },
-      following: {
-        connect: [
-          {
-            id: user1.id
-          }
-        ]
       }
     }
   });
@@ -164,16 +157,6 @@ const seedDB =  async () => {
           image: 'https://www.techopedia.com/images/uploads/6e13a6b3-28b6-454a-bef3-92d3d5529007.jpeg',
           header_image: 'https://www.kaspersky.com/content/en-global/images/repository/isc/2021/what_are_bots_image1_710x400px_300dpi.jpg'
         }
-      },
-      following: {
-        connect: [
-          {
-            id: user1.id
-          }, 
-          {
-            id: user2.id
-          }
-        ]
       }
     }
   });
@@ -237,19 +220,6 @@ const seedDB =  async () => {
           image: null,
           header_image: 'https://phantom-marca.unidadeditorial.es/1244d59d773f2d751225de0bcefa0d9a/resize/1320/f/jpg/assets/multimedia/imagenes/2021/09/13/16315436372092.jpg'
         }
-      },
-      following: {
-        connect: [
-          {
-            id: user1.id
-          }, 
-          {
-            id: user2.id
-          },
-          {
-            id: user3.id
-          }
-        ]
       }
     }
   });
