@@ -36,7 +36,6 @@ const client_1 = require("@prisma/client");
 const cors_1 = __importDefault(require("cors"));
 const dotenv = __importStar(require("dotenv"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const hashtagFinder_1 = __importDefault(require("../utils/hashtagFinder"));
 dotenv.config({ path: '../.env' });
 const prisma = new client_1.PrismaClient();
 const allowedOrigins = ['http://localhost:3000'];
@@ -58,120 +57,50 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
-router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const specificTweet = yield prisma.tweet.findUnique({
-        where: {
-            id: parseInt(req.params.id)
-        }, select: {
-            id: true,
-            contents: true,
-            createdAt: true,
-            image: true,
-            user: {
-                select: {
-                    username: true,
-                    name: true,
-                    profile: {
-                        select: {
-                            image: true
-                        }
-                    }
-                }
-            },
-            hashtags: true,
-            retweets: true,
-            likes: true,
-            threadSuccessor: true,
-            threadPredecessor: true,
-        }
-    });
-    res.send(specificTweet);
-}));
 router.post('/new', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(req.user)
-    const newTweet = yield prisma.tweet.create({
-        data: {
-            contents: req.body.contents,
-            image: req.body.image,
-            userID: req.user.id
-        }
-    });
-    if (req.body.replyTo) {
-        const replyTo = yield prisma.tweet.update({
-            where: {
-                id: req.body.replyTo
-            },
-            data: {
-                threadSuccessorID: newTweet.id
-            },
-        });
-        if (req.user.id != req.body.notificationRecipient && newTweet.id) {
-            const addNotification = yield prisma.notification.create({
-                data: {
-                    replyID: newTweet.id,
-                    type: 'Reply',
-                    recipientID: req.body.notificationRecipient
-                }
-            });
-        }
-    }
-    const addToFeed = yield prisma.feedItem.create({
-        data: {
-            type: "Tweet",
-            tweetID: newTweet.id,
-            userID: req.user.id
-        }
-    });
-    const createHashtags = yield (0, hashtagFinder_1.default)(newTweet.contents, newTweet.id);
-    const createdTweetAndHashtags = yield prisma.tweet.findUnique({
+    const addFollowRelation = yield prisma.user.update({
         where: {
-            id: newTweet.id
+            id: req.user.id
         },
-        select: {
-            id: true,
-            contents: true,
-            createdAt: true,
-            image: true,
-            userID: true,
-            hashtags: {
-                select: {
-                    id: true,
-                    contents: true,
+        data: {
+            following: {
+                connect: {
+                    id: req.body.followRecipient
                 }
             }
         }
     });
-    res.send(createdTweetAndHashtags);
-}));
-router.post('/delete', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const deleteRelations = yield prisma.tweet.update({
-        where: {
-            id: req.body.tweetID
-        },
+    const createNotification = yield prisma.notification.create({
         data: {
-            likes: {
-                deleteMany: {}
-            },
-            retweets: {
-                deleteMany: {}
-            },
-            mentions: {
-                deleteMany: {}
-            },
-            feedItems: {
-                deleteMany: {}
-            }
-        }
-    });
-    const deleteTweet = yield prisma.tweet.delete({
-        where: {
-            id: req.body.tweetID
+            recipientID: req.body.followRecipient,
+            type: 'Follow',
+            followID: req.user.id
         }
     });
     res.sendStatus(204);
 }));
-// router.delete('/', authenticateToken, async (req:any, res:any) => {
-//   const deleteTweet = prisma.
-// })
+router.delete('/delete', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const removeNotification = yield prisma.notification.delete({
+        where: {
+            newFollowID: {
+                recipientID: req.body.followRecipient,
+                followID: req.user.id
+            }
+        }
+    });
+    const removeFollowRelation = yield prisma.user.update({
+        where: {
+            id: req.user.id
+        },
+        data: {
+            following: {
+                disconnect: {
+                    id: req.body.followRecipient
+                }
+            }
+        }
+    });
+    res.sendStatus(204);
+}));
 exports.default = router;
-//# sourceMappingURL=tweet.js.map
+//# sourceMappingURL=follow.js.map

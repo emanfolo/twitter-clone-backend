@@ -32,24 +32,6 @@ const hashtagFinder = (tweet, tweetID) => __awaiter(void 0, void 0, void 0, func
             },
         });
     }
-    // for (let i = 0; i < array.length; i++) {
-    //   const addHashtags = await prisma.tweet.update({
-    //     where: {
-    //       id: tweetID,
-    //     },
-    //     data: {
-    //       hashtags: {
-    //         // create: { 
-    //         //   contents: array[i],
-    //         // }
-    //         connectOrCreate: {
-    //           create: {contents: array[i]}, 
-    //           where: { id: 4 }
-    //         }
-    //       }
-    //     }
-    //   })
-    // }
 });
 exports.default = hashtagFinder;
 //# sourceMappingURL=hashtagFinder.js.map

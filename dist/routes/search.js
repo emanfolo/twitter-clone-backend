@@ -23,19 +23,26 @@ const options = {
 const router = express_1.default.Router();
 router.use(express_1.default.json());
 router.use((0, cors_1.default)(options));
-router.get('/:contents', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const feedByHashtag = yield prisma.feedItem.findMany({
+// router.get('/profile/:id', async (req:any, res: any) => {
+// })
+router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const searchResult = yield prisma.feedItem.findMany({
         where: {
-            tweet: {
-                hashtags: {
-                    some: {
+            AND: [
+                {
+                    tweet: {
                         contents: {
-                            contains: req.params.contents,
+                            contains: req.body.params,
                             mode: 'insensitive'
-                        }
+                        },
+                    },
+                },
+                {
+                    type: {
+                        not: 'Retweet'
                     }
                 }
-            }
+            ]
         },
         orderBy: {
             createdAt: "desc"
@@ -72,11 +79,27 @@ router.get('/:contents', (req, res) => __awaiter(void 0, void 0, void 0, functio
                     threadSuccessor: true,
                     threadPredecessor: true
                 }
+            },
+            retweet: {
+                select: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            followedBy: true,
+                            following: true,
+                        }
+                    }
+                }
             }
         }
     });
-    res.send(feedByHashtag);
-    // console.log(feedByHashtag)
+    if (searchResult) {
+        res.send(searchResult);
+    }
+    else {
+        res.send([]);
+    }
 }));
 exports.default = router;
-//# sourceMappingURL=hashtag.js.map
+//# sourceMappingURL=search.js.map

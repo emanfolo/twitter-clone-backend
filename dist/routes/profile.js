@@ -57,12 +57,14 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
-router.get('/', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userProfile = yield prisma.user.findUnique({
-        where: {
-            id: req.user.id
-        },
+// router.post('/new', authenticateToken, async (req: any, res: any) => {
+//   const newProfile = await prisma.profile.create({
+//   })
+// })
+router.get('/recommended', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const profiles = yield prisma.user.findMany({
         select: {
+            id: true,
             name: true,
             username: true,
             createdAt: true,
@@ -71,20 +73,6 @@ router.get('/', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 
                     image: true,
                     header_image: true,
                     bio: true
-                }
-            },
-            tweets: {
-                select: {
-                    id: true,
-                    contents: true,
-                    createdAt: true,
-                    image: true,
-                    hashtags: {
-                        select: {
-                            id: true,
-                            contents: true
-                        }
-                    }
                 }
             },
             followedBy: {
@@ -101,7 +89,120 @@ router.get('/', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 
             }
         }
     });
-    res.send(userProfile);
+    res.send(profiles);
+}));
+router.get('/:username', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const requestedProfile = yield prisma.user.findUnique({
+        where: {
+            username: req.params.username
+        },
+        select: {
+            id: true,
+            name: true,
+            username: true,
+            createdAt: true,
+            profile: {
+                select: {
+                    image: true,
+                    header_image: true,
+                    bio: true
+                }
+            },
+            followedBy: {
+                select: {
+                    id: true,
+                    username: true
+                }
+            },
+            following: {
+                select: {
+                    id: true,
+                    username: true
+                }
+            }
+        }
+    });
+    if (requestedProfile) {
+        res.send(requestedProfile);
+    }
+    else {
+        res.sendStatus(404);
+    }
+}));
+router.post('/image/header', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const uploadHeaderImage = yield prisma.user.update({
+        where: {
+            id: req.user.id
+        },
+        data: {
+            profile: {
+                upsert: {
+                    create: {
+                        header_image: req.body.image
+                    },
+                    update: {
+                        header_image: req.body.image
+                    }
+                }
+            }
+        }
+    });
+    if (uploadHeaderImage) {
+        res.sendStatus(204);
+    }
+    else {
+        res.sendStatus(404);
+    }
+}));
+router.post('/image/profile', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const uploadProfileImage = yield prisma.user.update({
+        where: {
+            id: req.user.id
+        },
+        data: {
+            profile: {
+                upsert: {
+                    create: {
+                        image: req.body.image
+                    },
+                    update: {
+                        image: req.body.image
+                    }
+                }
+            }
+        }
+    });
+    if (uploadProfileImage) {
+        res.sendStatus(204);
+    }
+    else {
+        res.sendStatus(404);
+    }
+}));
+router.post('/bio', authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const changeBio = yield prisma.user.update({
+        where: {
+            id: req.user.id
+        },
+        data: {
+            profile: {
+                upsert: {
+                    create: {
+                        bio: req.body.bio
+                    },
+                    update: {
+                        bio: req.body.bio
+                    }
+                }
+            }
+        }
+    });
+    if (changeBio) {
+        res.sendStatus(204);
+    }
+    else {
+        res.sendStatus(404);
+    }
 }));
 exports.default = router;
 //# sourceMappingURL=profile.js.map

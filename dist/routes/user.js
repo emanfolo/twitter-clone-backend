@@ -50,7 +50,7 @@ router.get('/', (req, res) => {
     res.send('User endpoint');
 });
 const generateAccessToken = (user) => {
-    return jsonwebtoken_1.default.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    return jsonwebtoken_1.default.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
 };
 const parseUserDetails = (user) => __awaiter(void 0, void 0, void 0, function* () {
     let details = {
@@ -58,7 +58,8 @@ const parseUserDetails = (user) => __awaiter(void 0, void 0, void 0, function* (
         email: user.email,
         username: user.username,
         name: user.name,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        profile: null
     };
     return details;
 });
@@ -102,7 +103,11 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
         //Store in redis soon
         refreshTokens.push(refreshToken);
         const userDetails = yield parseUserDetails(newUser);
-        res.json({ userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken });
+        if (userDetails)
+            res.json({ id: userDetails.id, name: userDetails.name,
+                username: userDetails.username, profile: userDetails.profile,
+                accessToken: accessToken, refreshToken: refreshToken });
+        // res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
     }
     else {
         res.send('Error please try again');
@@ -115,7 +120,7 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     let userObject = yield prisma.user.findUnique({
         where: {
             email: req.body.email
-        },
+        }
     });
     if (userObject) {
         const match = yield bcryptjs_1.default.compare(req.body.password, userObject.password);
@@ -125,8 +130,21 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             const refreshToken = jsonwebtoken_1.default.sign(userObject, process.env.REFRESH_TOKEN_SECRET);
             //Store in redis soon
             refreshTokens.push(refreshToken);
-            const userDetails = yield parseUserDetails(userObject);
-            res.json({ userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken });
+            const userDetails = yield prisma.user.findUnique({
+                where: {
+                    id: userObject.id
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    profile: true,
+                }
+            });
+            if (userDetails)
+                res.json({ id: userDetails.id, name: userDetails.name,
+                    username: userDetails.username, profile: userDetails.profile,
+                    accessToken: accessToken, refreshToken: refreshToken });
         }
         else if (!match) {
             res.console.error();
