@@ -37,7 +37,8 @@ const parseUserDetails = async (user) => {
     email: user.email,
     username: user.username,
     name: user.name,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
+    profile: null
   }
   return details
 }
@@ -94,8 +95,11 @@ router.post('/register', async (req: RegistrationRequest, res: any) =>{
     //Store in redis soon
     refreshTokens.push(refreshToken)
     const userDetails = await parseUserDetails(newUser)
-
-    res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
+    if (userDetails)
+        res.json({id: userDetails.id, name: userDetails.name, 
+          username: userDetails.username, profile: userDetails.profile, 
+          accessToken: accessToken, refreshToken: refreshToken})
+    // res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
   } else {
     res.send('Error please try again')
   }
