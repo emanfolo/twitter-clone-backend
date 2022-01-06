@@ -5,7 +5,7 @@ import { resolve } from "path/posix";
 
 const prisma = new PrismaClient()
 
-const allowedOrigins = ['http://localhost:3000']
+const allowedOrigins = ['http://localhost:3000', 'https://flitter-zeta.vercel.app/']
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins
