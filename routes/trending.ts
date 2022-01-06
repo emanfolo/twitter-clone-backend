@@ -5,7 +5,7 @@ import findTrendingTopics from '../utils/findTrendingTopics'
 
 const prisma = new PrismaClient()
 
-const allowedOrigins = ['http://localhost:3000', 'https://flitter-zeta.vercel.app/']
+const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app']
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins

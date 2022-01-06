@@ -10,11 +10,19 @@ import searchRouter from '../routes/search'
 import trendingRouter from '../routes/trending'
 import notificationRouter from '../routes/notification'
 import followRouter from '../routes/follow'
-
-
+import cors  from 'cors'
 
 
 const app = express()
+
+const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app']
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+}
+
+app.use(cors(options))
+
 app.use('/user', userRouter)
 app.use('/feed', feedRouter)
 app.use('/profile', profileRouter)
