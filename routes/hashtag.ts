@@ -4,14 +4,17 @@ import cors  from 'cors'
 
 const prisma = new PrismaClient()
 
-const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
-const options: cors.CorsOptions = {
-  origin: allowedOrigins
-}
+// const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
+// const options: cors.CorsOptions = {
+//   origin: allowedOrigins
+// }
 
 const router = express.Router()
 router.use(express.json())
-router.use(cors(options))
+// router.use(cors(options))
+
+router.use(cors())
+
 
 interface HashtagRequest {
   params : {
