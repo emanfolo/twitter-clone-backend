@@ -15,7 +15,7 @@ import cors  from 'cors'
 
 const app = express()
 
-const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app']
+const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins
