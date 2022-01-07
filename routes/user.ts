@@ -65,59 +65,57 @@ interface RegistrationRequest {
 }
 
 router.post("/register", async (req: RegistrationRequest, res: any) => {
-
   if (req.body.email && req.body.username) {
     const usernameTaken = await prisma.user.count({
       where: {
-        username: req.body.username
-      }
-    })
+        username: req.body.username,
+      },
+    });
 
     const emailTaken = await prisma.user.count({
       where: {
-        email: req.body.email
-      }
-    })
-
-    if (!usernameTaken && !emailTaken){
-      const hashedPassword = await bcryptjs.hash(req.body.password, 12);
-
-    const newUser = await prisma.user.create({
-      data: {
         email: req.body.email,
-        password: hashedPassword,
-        name: req.body.name,
-        username: req.body.username,
-        profile: {
-          create: {
-            bio: "Welcome to flitter",
-            image: null,
-            header_image: null,
-          },
-        },
       },
     });
-    const accessToken = generateAccessToken(newUser);
-    const refreshToken: string = jwt.sign(
-      newUser,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-    //Store in redis soon
-    refreshTokens.push(refreshToken);
-    const userDetails = await parseUserDetails(newUser);
-    if (userDetails)
-      res.json({
-        id: userDetails.id,
-        name: userDetails.name,
-        username: userDetails.username,
-        profile: userDetails.profile,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+
+    if (!usernameTaken && !emailTaken) {
+      const hashedPassword = await bcryptjs.hash(req.body.password, 12);
+
+      const newUser = await prisma.user.create({
+        data: {
+          email: req.body.email,
+          password: hashedPassword,
+          name: req.body.name,
+          username: req.body.username,
+          profile: {
+            create: {
+              bio: "Welcome to flitter",
+              image: null,
+              header_image: null,
+            },
+          },
+        },
       });
+      const accessToken = generateAccessToken(newUser);
+      const refreshToken: string = jwt.sign(
+        newUser,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      //Store in redis soon
+      refreshTokens.push(refreshToken);
+      const userDetails = await parseUserDetails(newUser);
+      if (userDetails)
+        res.json({
+          id: userDetails.id,
+          name: userDetails.name,
+          username: userDetails.username,
+          profile: userDetails.profile,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
     } else {
-    res.sendStatus(404);
-  }
-    
+      res.sendStatus(404);
+    }
   } else {
     res.sendStatus(404);
   }
@@ -131,9 +129,6 @@ interface LoginRequest {
 }
 
 router.post("/login", async (req: LoginRequest, res: any) => {
-  // const userExists: boolean = prisma.$exists.user({
-  //   id: 'cjli6tko8005t0a23fid7kke7',
-  // })
 
   let userObject = await prisma.user.findUnique({
     where: {
@@ -148,7 +143,6 @@ router.post("/login", async (req: LoginRequest, res: any) => {
     );
 
     if (match) {
-      // const accessToken = jwt.sign(userObject, process.env.ACCESS_TOKEN_SECRET)
       const accessToken = generateAccessToken(userObject);
       const refreshToken: string = jwt.sign(
         userObject,

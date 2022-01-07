@@ -123,12 +123,12 @@ router.get("/all", authenticateToken, (req, res) => __awaiter(void 0, void 0, vo
                             username: true,
                             profile: {
                                 select: {
-                                    image: true
-                                }
-                            }
-                        }
-                    }
-                }
+                                    image: true,
+                                },
+                            },
+                        },
+                    },
+                },
             },
             follow: {
                 select: {

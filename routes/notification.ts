@@ -96,12 +96,12 @@ router.get("/all", authenticateToken, async (req: any, res: any) => {
               username: true,
               profile: {
                 select: {
-                  image: true
-                }
-              }
-            }
-          }
-        }
+                  image: true,
+                },
+              },
+            },
+          },
+        },
       },
       follow: {
         select: {

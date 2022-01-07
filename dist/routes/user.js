@@ -60,7 +60,7 @@ const parseUserDetails = (user) => __awaiter(void 0, void 0, void 0, function* (
         username: user.username,
         name: user.name,
         createdAt: user.createdAt,
-        profile: null,
+        profile: user.profile,
     };
     return details;
 });
@@ -81,48 +81,58 @@ router.post("/token", (req, res) => {
     });
 });
 router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.body.email) {
-        const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 12);
-        const newUser = yield prisma.user.create({
-            data: {
-                email: req.body.email,
-                password: hashedPassword,
-                name: req.body.name,
+    if (req.body.email && req.body.username) {
+        const usernameTaken = yield prisma.user.count({
+            where: {
                 username: req.body.username,
-                profile: {
-                    create: {
-                        bio: null,
-                        image: null,
-                        header_image: null,
-                    },
-                },
             },
         });
-        // const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
-        const accessToken = generateAccessToken(newUser);
-        const refreshToken = jsonwebtoken_1.default.sign(newUser, process.env.REFRESH_TOKEN_SECRET);
-        //Store in redis soon
-        refreshTokens.push(refreshToken);
-        const userDetails = yield parseUserDetails(newUser);
-        if (userDetails)
-            res.json({
-                id: userDetails.id,
-                name: userDetails.name,
-                username: userDetails.username,
-                profile: userDetails.profile,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
+        const emailTaken = yield prisma.user.count({
+            where: {
+                email: req.body.email,
+            },
+        });
+        if (!usernameTaken && !emailTaken) {
+            const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 12);
+            const newUser = yield prisma.user.create({
+                data: {
+                    email: req.body.email,
+                    password: hashedPassword,
+                    name: req.body.name,
+                    username: req.body.username,
+                    profile: {
+                        create: {
+                            bio: "Welcome to flitter",
+                            image: null,
+                            header_image: null,
+                        },
+                    },
+                },
             });
-        // res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
+            const accessToken = generateAccessToken(newUser);
+            const refreshToken = jsonwebtoken_1.default.sign(newUser, process.env.REFRESH_TOKEN_SECRET);
+            //Store in redis soon
+            refreshTokens.push(refreshToken);
+            const userDetails = yield parseUserDetails(newUser);
+            if (userDetails)
+                res.json({
+                    id: userDetails.id,
+                    name: userDetails.name,
+                    username: userDetails.username,
+                    profile: userDetails.profile,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                });
+        }
+        else {
+            res.sendStatus(404);
+        }
     }
     else {
-        res.send("Error please try again");
+        res.sendStatus(404);
     }
 }));
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const userExists: boolean = prisma.$exists.user({
-    //   id: 'cjli6tko8005t0a23fid7kke7',
-    // })
     let userObject = yield prisma.user.findUnique({
         where: {
             email: req.body.email,
@@ -131,7 +141,6 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (userObject) {
         const match = yield bcryptjs_1.default.compare(req.body.password, userObject.password);
         if (match) {
-            // const accessToken = jwt.sign(userObject, process.env.ACCESS_TOKEN_SECRET)
             const accessToken = generateAccessToken(userObject);
             const refreshToken = jsonwebtoken_1.default.sign(userObject, process.env.REFRESH_TOKEN_SECRET);
             //Store in redis soon
