@@ -119,13 +119,17 @@ router.get('/', authenticateToken, async (req:any , res:any) => {
     }
   })
 
+  
+
   const addFollowingToFeed = async (userAndFollowing:any) => {
     userAndFollowing.following.forEach(element => {
       feedArray.push(element.id)
     });
   }
 
-  addFollowingToFeed(userAndFollowing)
+  if (userAndFollowing?.following){
+    addFollowingToFeed(userAndFollowing)
+  }
 
   const feed = await prisma.feedItem.findMany({
     where: {

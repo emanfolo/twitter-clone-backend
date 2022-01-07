@@ -45,7 +45,7 @@ router.post('/new', authenticateToken, async (req: any, res:any) => {
     const addNotification = await prisma.notification.create({
     data: {
       likeID: newLike.id,
-      type: 'Like',
+      type: 'Like', 
       recipientID: req.body.notificationRecipient
     }
     })

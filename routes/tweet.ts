@@ -44,13 +44,16 @@ router.get('/:id', async (req: any, res: any) => {
       image: true,
       user: {
         select: {
+          id: true,
           username: true,
           name: true, 
           profile: {
             select: {
               image: true
             }
-          }
+          },
+          followedBy: true,
+          following: true,
         }
       },
       hashtags: true,
