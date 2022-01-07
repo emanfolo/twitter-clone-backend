@@ -1,43 +1,42 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
-import * as dotenv from 'dotenv'
-import jwt from 'jsonwebtoken'
-import hashtagFinder from '../utils/hashtagFinder'
+import cors from "cors";
+import * as dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import hashtagFinder from "../utils/hashtagFinder";
 
-dotenv.config({path: '../.env'})
+dotenv.config({ path: "../.env" });
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
-router.use(cors())
+router.use(cors());
 
-const authenticateToken = (req: any, res:any, next:any) => {
-  const authHeader = req.headers.authorization
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null ) return res.sendStatus(401)
+const authenticateToken = (req: any, res: any, next: any) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
 
-router.get('/:id', async (req: any, res: any) => {
-
-
+router.get("/:id", async (req: any, res: any) => {
   const specificTweet = await prisma.tweet.findUnique({
     where: {
-      id: parseInt(req.params.id)
-    }, select: {
+      id: parseInt(req.params.id),
+    },
+    select: {
       id: true,
       contents: true,
       createdAt: true,
@@ -46,77 +45,71 @@ router.get('/:id', async (req: any, res: any) => {
         select: {
           id: true,
           username: true,
-          name: true, 
+          name: true,
           profile: {
             select: {
-              image: true
-            }
+              image: true,
+            },
           },
           followedBy: true,
           following: true,
-        }
+        },
       },
       hashtags: true,
       retweets: true,
       likes: true,
       threadSuccessor: true,
       threadPredecessor: true,
-    }
-  })
+    },
+  });
 
-  res.send(specificTweet)
+  res.send(specificTweet);
+});
 
-})
-
-
-router.post('/new', authenticateToken, async (req: any, res: any) => {
-
-
-
+router.post("/new", authenticateToken, async (req: any, res: any) => {
   // console.log(req.user)
   const newTweet = await prisma.tweet.create({
     data: {
       contents: req.body.contents,
       image: req.body.image,
-      userID: req.user.id
-    }
-  })
-  
-  if (req.body.replyTo){
-  const replyTo = await prisma.tweet.update({
-    where: {
-      id: req.body.replyTo
-    }, 
-    data: {
-      threadSuccessorID: newTweet.id
+      userID: req.user.id,
     },
-  })
-    if (req.user.id != req.body.notificationRecipient && newTweet.id){
-      const addNotification = await prisma.notification.create({
-      data: {
-        replyID: newTweet.id,
-        type: 'Reply',    
-        recipientID: req.body.notificationRecipient
-      }
-      })
-    }
-}
+  });
 
+  if (req.body.replyTo) {
+    const replyTo = await prisma.tweet.update({
+      where: {
+        id: req.body.replyTo,
+      },
+      data: {
+        threadSuccessorID: newTweet.id,
+      },
+    });
+    if (req.user.id != req.body.notificationRecipient && newTweet.id) {
+      const addNotification = await prisma.notification.create({
+        data: {
+          replyID: newTweet.id,
+          type: "Reply",
+          recipientID: req.body.notificationRecipient,
+        },
+      });
+    }
+  }
 
   const addToFeed = await prisma.feedItem.create({
     data: {
-      type: "Tweet", 
+      type: "Tweet",
       tweetID: newTweet.id,
-      userID: req.user.id
-    }
-  })
+      userID: req.user.id,
+    },
+  });
 
-  const createHashtags = await hashtagFinder(newTweet.contents, newTweet.id)
+  const createHashtags = await hashtagFinder(newTweet.contents, newTweet.id);
 
   const createdTweetAndHashtags = await prisma.tweet.findUnique({
     where: {
-      id: newTweet.id
-    }, 
+      id: newTweet.id,
+    },
     select: {
       id: true,
       contents: true,
@@ -127,50 +120,46 @@ router.post('/new', authenticateToken, async (req: any, res: any) => {
         select: {
           id: true,
           contents: true,
-        }
-      }
-    }
-  })
+        },
+      },
+    },
+  });
 
+  res.send(createdTweetAndHashtags);
+});
 
-  res.send(createdTweetAndHashtags)
-
-})
-
-router.post('/delete', authenticateToken, async (req: any, res: any) => {
-
+router.post("/delete", authenticateToken, async (req: any, res: any) => {
   const deleteRelations = await prisma.tweet.update({
     where: {
-      id: req.body.tweetID
-    }, 
+      id: req.body.tweetID,
+    },
     data: {
       likes: {
-        deleteMany: {}
+        deleteMany: {},
       },
       retweets: {
-        deleteMany: {}
-      }, 
+        deleteMany: {},
+      },
       mentions: {
-        deleteMany: {}
-      }, 
+        deleteMany: {},
+      },
       feedItems: {
-        deleteMany: {}
-      }
-    }
-  })
+        deleteMany: {},
+      },
+    },
+  });
 
   const deleteTweet = await prisma.tweet.delete({
     where: {
-      id: req.body.tweetID
-    }
-  })
+      id: req.body.tweetID,
+    },
+  });
 
-  res.sendStatus(204)
-
-})
+  res.sendStatus(204);
+});
 
 // router.delete('/', authenticateToken, async (req:any, res:any) => {
 //   const deleteTweet = prisma.
 // })
 
-export default router
+export default router;

@@ -1,66 +1,79 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient
-
+const prisma = new PrismaClient();
 
 const findTrendingTopics = async (tweets: any) => {
-
-//Find frequency of all words 
+  //Find frequency of all words
 
   const freqMap = {};
 
   function wordFreq(string) {
-    let words = string.replace(/[.]/g, '').split(/\s/);
-    words.forEach(function(w) {
-        if (!freqMap[w]) {
-            freqMap[w] = 0;
-        }
-        freqMap[w] += 1;
-      });
-    }
-
-  for (let i = 0; i < tweets.length; i++){
-    wordFreq(tweets[i].contents)
+    let words = string.replace(/[.]/g, "").split(/\s/);
+    words.forEach(function (w) {
+      if (!freqMap[w]) {
+        freqMap[w] = 0;
+      }
+      freqMap[w] += 1;
+    });
   }
 
-//Filter out unpermitted words 
+  for (let i = 0; i < tweets.length; i++) {
+    wordFreq(tweets[i].contents);
+  }
 
-const unpermittedWord = ['the', 
-'i', 'my', 'to', 'for', 'is', 'this', 
-'hashtags', '?', '', 'on', 'there', 'a', 'if', 'on', 'be', 'way', 'do', 'of']
+  //Filter out unpermitted words
 
-const filteredTrending = Object.keys(freqMap)
-  .filter(key => !unpermittedWord.includes(key.toLowerCase()))
-  .reduce((obj, key) => {
-    obj[key] = freqMap[key];
-    return obj;
-  }, {});
+  const unpermittedWord = [
+    "the",
+    "i",
+    "my",
+    "to",
+    "for",
+    "is",
+    "this",
+    "hashtags",
+    "?",
+    "",
+    "on",
+    "there",
+    "a",
+    "if",
+    "on",
+    "be",
+    "way",
+    "do",
+    "of",
+  ];
 
+  const filteredTrending = Object.keys(freqMap)
+    .filter((key) => !unpermittedWord.includes(key.toLowerCase()))
+    .reduce((obj, key) => {
+      obj[key] = freqMap[key];
+      return obj;
+    }, {});
 
-//Take the top 10 most frequent words
+  //Take the top 10 most frequent words
 
-let topTenTrending = {};
+  let topTenTrending = {};
 
-
-const pickHighest = (obj, num = 10) => {
-   
-   if(num > Object.keys(obj).length){
+  const pickHighest = (obj, num = 10) => {
+    if (num > Object.keys(obj).length) {
       return false;
-   };
-   Object.keys(obj).sort((a, b) => obj[b] - obj[a]).forEach((key, ind) =>
-   {
-      if(ind < num){
-         topTenTrending[key] = obj[key];
-      }
-   });
+    }
+    Object.keys(obj)
+      .sort((a, b) => obj[b] - obj[a])
+      .forEach((key, ind) => {
+        if (ind < num) {
+          topTenTrending[key] = obj[key];
+        }
+      });
+  };
+
+  pickHighest(filteredTrending);
+
+  //Return the trending topics
+
+  return topTenTrending;
 };
 
-pickHighest(filteredTrending)
-
-//Return the trending topics
-
-return topTenTrending
-
-}
-
-export default findTrendingTopics
+export default findTrendingTopics;

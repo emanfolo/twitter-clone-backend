@@ -1,94 +1,85 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
-import * as dotenv from 'dotenv'
-import jwt from 'jsonwebtoken'
+import cors from "cors";
+import * as dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
-dotenv.config({path: '../.env'})
+dotenv.config({ path: "../.env" });
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
 
-router.use(cors())
+router.use(cors());
 
-
-const authenticateToken = (req: any, res:any, next:any) => {
-  const authHeader = req.headers.authorization
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null ) return res.sendStatus(401)
+const authenticateToken = (req: any, res: any, next: any) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
 
-router.post('/new', authenticateToken, async (req:any, res:any) => {
-
+router.post("/new", authenticateToken, async (req: any, res: any) => {
   const addFollowRelation = await prisma.user.update({
     where: {
-      id: req.user.id
+      id: req.user.id,
     },
     data: {
       following: {
         connect: {
-          id: req.body.followRecipient
-        }
-      }
-    }
-  })
+          id: req.body.followRecipient,
+        },
+      },
+    },
+  });
 
   const createNotification = await prisma.notification.create({
-    data:{
+    data: {
       recipientID: req.body.followRecipient,
-      type: 'Follow',
-      followID: req.user.id
-    }
-  })
+      type: "Follow",
+      followID: req.user.id,
+    },
+  });
 
-  res.sendStatus(204)
-  
+  res.sendStatus(204);
+});
 
-})
-
-router.delete('/delete', authenticateToken, async (req:any, res:any) => {
-
+router.delete("/delete", authenticateToken, async (req: any, res: any) => {
   const removeNotification = await prisma.notification.delete({
     where: {
       newFollowID: {
         recipientID: req.body.followRecipient,
-        followID: req.user.id
-      }
-    }
-  })
-  
+        followID: req.user.id,
+      },
+    },
+  });
+
   const removeFollowRelation = await prisma.user.update({
     where: {
-      id: req.user.id  
+      id: req.user.id,
     },
     data: {
       following: {
         disconnect: {
-          id: req.body.followRecipient
-        }
-      }
-    }
-  })
+          id: req.body.followRecipient,
+        },
+      },
+    },
+  });
 
+  res.sendStatus(204);
+});
 
-  res.sendStatus(204)
-  
-
-})
-
-
-export default router
+export default router;

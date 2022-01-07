@@ -1,29 +1,26 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
-import findTrendingTopics from '../utils/findTrendingTopics'
+import cors from "cors";
+import findTrendingTopics from "../utils/findTrendingTopics";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
-router.use(cors())
+router.use(cors());
 
-router.get('/', async (req: any, res: any) => {
+router.get("/", async (req: any, res: any) => {
+  const allTweets = await prisma.tweet.findMany();
 
-  const allTweets = await prisma.tweet.findMany()
+  const trendingTopics = await findTrendingTopics(allTweets);
 
+  res.send(trendingTopics);
+});
 
-  const trendingTopics = await findTrendingTopics(allTweets)
-
-  res.send(trendingTopics)
-
-})
-
-export default router
+export default router;

@@ -1,30 +1,27 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
+import cors from "cors";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
 
-router.use(cors())
-
+router.use(cors());
 
 interface HashtagRequest {
-  params : {
-    contents: string
-  }
+  params: {
+    contents: string;
+  };
 }
 
-
-router.get('/:contents', async (req: HashtagRequest, res: any) => {
-
+router.get("/:contents", async (req: HashtagRequest, res: any) => {
   const feedByHashtag = await prisma.feedItem.findMany({
     where: {
       tweet: {
@@ -32,20 +29,20 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
           some: {
             contents: {
               contains: req.params.contents,
-              mode: 'insensitive'
-            }
-          }
-        }
-      }
+              mode: "insensitive",
+            },
+          },
+        },
+      },
     },
     orderBy: {
-      createdAt: "desc"
+      createdAt: "desc",
     },
-      select: {
+    select: {
       id: true,
       type: true,
       tweet: {
-        select:{
+        select: {
           id: true,
           contents: true,
           createdAt: true,
@@ -60,27 +57,26 @@ router.get('/:contents', async (req: HashtagRequest, res: any) => {
                   image: true,
                   header_image: true,
                   bio: true,
-                }
+                },
               },
               followedBy: true,
               following: true,
-            }
+            },
           },
           retweets: true,
           likes: true,
           hashtags: true,
           mentions: true,
           threadSuccessor: true,
-          threadPredecessor: true
-        }
-      }
-    }
-  })
+          threadPredecessor: true,
+        },
+      },
+    },
+  });
 
-  res.send(feedByHashtag)
+  res.send(feedByHashtag);
 
   // console.log(feedByHashtag)
+});
 
-})
-
-export default router
+export default router;

@@ -1,56 +1,52 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
+import cors from "cors";
 import { resolve } from "path/posix";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
 
-router.use(cors())
-
+router.use(cors());
 
 // router.get('/profile/:id', async (req:any, res: any) => {
 
-
-
 // })
 
-router.post('/', async (req:any, res: any) => {
+router.post("/", async (req: any, res: any) => {
   const searchResult = await prisma.feedItem.findMany({
     where: {
       AND: [
         {
-        tweet: {
-        contents: {
-          contains: req.body.params,
-          mode: 'insensitive'
+          tweet: {
+            contents: {
+              contains: req.body.params,
+              mode: "insensitive",
+            },
+          },
         },
-      },
-    },
-    {
-      type: {
-        not: 'Retweet'
-      }
-    }
-    ]
-      
+        {
+          type: {
+            not: "Retweet",
+          },
+        },
+      ],
     },
     orderBy: {
-      createdAt: "desc"
+      createdAt: "desc",
     },
-        select: {
+    select: {
       id: true,
       type: true,
       tweet: {
-        select:{
+        select: {
           id: true,
           contents: true,
           createdAt: true,
@@ -65,19 +61,19 @@ router.post('/', async (req:any, res: any) => {
                   image: true,
                   header_image: true,
                   bio: true,
-                }
+                },
               },
               followedBy: true,
               following: true,
-            }
+            },
           },
           retweets: true,
           likes: true,
           hashtags: true,
           mentions: true,
           threadSuccessor: true,
-          threadPredecessor: true
-        }
+          threadPredecessor: true,
+        },
       },
       retweet: {
         select: {
@@ -87,21 +83,18 @@ router.post('/', async (req:any, res: any) => {
               name: true,
               followedBy: true,
               following: true,
-            }
-          }
-        }
-      }
-    }
-  })
+            },
+          },
+        },
+      },
+    },
+  });
 
-  if (searchResult){
-    res.send(searchResult)
+  if (searchResult) {
+    res.send(searchResult);
   } else {
-    res.send([])
+    res.send([]);
   }
+});
 
-
-})
-
-
-export default router
+export default router;

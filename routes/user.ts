@@ -1,36 +1,32 @@
 import express from "express";
-import jwt from 'jsonwebtoken'
-import bcryptjs from 'bcryptjs'
-import * as dotenv from 'dotenv'
+import jwt from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
+import * as dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import cors  from 'cors'
+import cors from "cors";
 
+dotenv.config({ path: "../.env" });
 
-dotenv.config({path: '../.env'})
-
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // const allowedOrigins = ['http://localhost:3000', 'flitter-site.netlify.app', 'https://flitter-zeta.vercel.app/']
 // const options: cors.CorsOptions = {
 //   origin: allowedOrigins
 // }
 
-const router = express.Router()
-router.use(express.json())
+const router = express.Router();
+router.use(express.json());
 // router.use(cors(options))
 
-router.use(cors())
+router.use(cors());
 
-router.get('/', (req:any , res:any) => {
-
-  res.send('User endpoint')
-
-})
-
+router.get("/", (req: any, res: any) => {
+  res.send("User endpoint");
+});
 
 const generateAccessToken = (user) => {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h'})
-}
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
+};
 
 const parseUserDetails = async (user) => {
   let details = {
@@ -39,40 +35,38 @@ const parseUserDetails = async (user) => {
     username: user.username,
     name: user.name,
     createdAt: user.createdAt,
-    profile: null
-  }
-  return details
-}
+    profile: null,
+  };
+  return details;
+};
 
 //Store in redis soon
-let refreshTokens: string[] = []
+let refreshTokens: string[] = [];
 
-router.post('/token', (req: any, res:any) => {
-  const refreshToken = req.body.token
-  if (refreshToken == null) return res.sendStatus(401)
-  if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
+router.post("/token", (req: any, res: any) => {
+  const refreshToken = req.body.token;
+  if (refreshToken == null) return res.sendStatus(401);
+  if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    delete user.iat
-    const accessToken = generateAccessToken(user)
-    res.json({accessToken: accessToken})
-  })
-})
+    if (err) return res.sendStatus(403);
+    delete user.iat;
+    const accessToken = generateAccessToken(user);
+    res.json({ accessToken: accessToken });
+  });
+});
 
 interface RegistrationRequest {
   body: {
-    email: string,
-    password: string,
-    name: string,
-    username: string
-  }
+    email: string;
+    password: string;
+    name: string;
+    username: string;
+  };
 }
 
-router.post('/register', async (req: RegistrationRequest, res: any) =>{
-
-  if(req.body.email){
-
-    const hashedPassword = await bcryptjs.hash(req.body.password, 12)
+router.post("/register", async (req: RegistrationRequest, res: any) => {
+  if (req.body.email) {
+    const hashedPassword = await bcryptjs.hash(req.body.password, 12);
 
     const newUser = await prisma.user.create({
       data: {
@@ -84,90 +78,103 @@ router.post('/register', async (req: RegistrationRequest, res: any) =>{
           create: {
             bio: null,
             image: null,
-            header_image: null
-          }
-        }
-      }
-    })
+            header_image: null,
+          },
+        },
+      },
+    });
 
     // const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
-    const accessToken = generateAccessToken(newUser)
-    const refreshToken: string = jwt.sign(newUser, process.env.REFRESH_TOKEN_SECRET)
+    const accessToken = generateAccessToken(newUser);
+    const refreshToken: string = jwt.sign(
+      newUser,
+      process.env.REFRESH_TOKEN_SECRET
+    );
     //Store in redis soon
-    refreshTokens.push(refreshToken)
-    const userDetails = await parseUserDetails(newUser)
+    refreshTokens.push(refreshToken);
+    const userDetails = await parseUserDetails(newUser);
     if (userDetails)
-        res.json({id: userDetails.id, name: userDetails.name, 
-          username: userDetails.username, profile: userDetails.profile, 
-          accessToken: accessToken, refreshToken: refreshToken})
+      res.json({
+        id: userDetails.id,
+        name: userDetails.name,
+        username: userDetails.username,
+        profile: userDetails.profile,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
     // res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
   } else {
-    res.send('Error please try again')
+    res.send("Error please try again");
   }
-
-})
+});
 
 interface LoginRequest {
   body: {
-    email: string, 
-    password: string
-  }
-  
+    email: string;
+    password: string;
+  };
 }
 
+router.post("/login", async (req: LoginRequest, res: any) => {
+  // const userExists: boolean = prisma.$exists.user({
+  //   id: 'cjli6tko8005t0a23fid7kke7',
+  // })
 
+  let userObject = await prisma.user.findUnique({
+    where: {
+      email: req.body.email,
+    },
+  });
 
-router.post('/login', async (req:LoginRequest, res:any) => {
+  if (userObject) {
+    const match = await bcryptjs.compare(
+      req.body.password,
+      userObject.password
+    );
 
-    // const userExists: boolean = prisma.$exists.user({
-    //   id: 'cjli6tko8005t0a23fid7kke7',
-    // })
-
-    let userObject = await prisma.user.findUnique({
-      where: {
-        email: req.body.email
-      }
-    })  
-
-    if(userObject){
-      const match =  await bcryptjs.compare(req.body.password, userObject.password)
-
-      if(match){
-        // const accessToken = jwt.sign(userObject, process.env.ACCESS_TOKEN_SECRET)
-        const accessToken = generateAccessToken(userObject)
-        const refreshToken: string = jwt.sign(userObject, process.env.REFRESH_TOKEN_SECRET)
-        //Store in redis soon
-        refreshTokens.push(refreshToken)
-        const userDetails = await prisma.user.findUnique({
-          where:{
-            id: userObject.id
-          },
-          select:{
-            id: true,
-            name: true,
-            username: true,
-            profile: true,
-          }
-        })
-        if (userDetails)
-        res.json({id: userDetails.id, name: userDetails.name, 
-          username: userDetails.username, profile: userDetails.profile, 
-          accessToken: accessToken, refreshToken: refreshToken})
-      } else if (!match){
-        res.console.error();
-        ('Wrong password')
-      }
-    } else if (userObject == undefined || null) {
-      res.console.error();     
-      ('No user matches this email')
+    if (match) {
+      // const accessToken = jwt.sign(userObject, process.env.ACCESS_TOKEN_SECRET)
+      const accessToken = generateAccessToken(userObject);
+      const refreshToken: string = jwt.sign(
+        userObject,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      //Store in redis soon
+      refreshTokens.push(refreshToken);
+      const userDetails = await prisma.user.findUnique({
+        where: {
+          id: userObject.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          profile: true,
+        },
+      });
+      if (userDetails)
+        res.json({
+          id: userDetails.id,
+          name: userDetails.name,
+          username: userDetails.username,
+          profile: userDetails.profile,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
+    } else if (!match) {
+      res.console.error();
+      ("Wrong password");
     }
+  } else if (userObject == undefined || null) {
+    res.console.error();
+    ("No user matches this email");
+  }
+});
 
-})
-
-router.delete('/logout', (req, res) => {
+router.delete("/logout", (req, res) => {
   // Eventually will delete refreshtoken from DB (REDIS?)
-  refreshTokens = refreshTokens.filter(token => token !== req.body.token)
-  res.sendStatus(204)
-})
+  refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
+  res.sendStatus(204);
+});
 
-export default router
+export default router;
