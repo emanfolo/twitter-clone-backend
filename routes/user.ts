@@ -35,7 +35,7 @@ const parseUserDetails = async (user) => {
     username: user.username,
     name: user.name,
     createdAt: user.createdAt,
-    profile: null,
+    profile: user.profile,
   };
   return details;
 };
@@ -65,8 +65,22 @@ interface RegistrationRequest {
 }
 
 router.post("/register", async (req: RegistrationRequest, res: any) => {
-  if (req.body.email) {
-    const hashedPassword = await bcryptjs.hash(req.body.password, 12);
+
+  if (req.body.email && req.body.username) {
+    const usernameTaken = await prisma.user.count({
+      where: {
+        username: req.body.username
+      }
+    })
+
+    const emailTaken = await prisma.user.count({
+      where: {
+        email: req.body.email
+      }
+    })
+
+    if (!usernameTaken && !emailTaken){
+      const hashedPassword = await bcryptjs.hash(req.body.password, 12);
 
     const newUser = await prisma.user.create({
       data: {
@@ -76,15 +90,13 @@ router.post("/register", async (req: RegistrationRequest, res: any) => {
         username: req.body.username,
         profile: {
           create: {
-            bio: null,
+            bio: "Welcome to flitter",
             image: null,
             header_image: null,
           },
         },
       },
     });
-
-    // const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
     const accessToken = generateAccessToken(newUser);
     const refreshToken: string = jwt.sign(
       newUser,
@@ -102,9 +114,12 @@ router.post("/register", async (req: RegistrationRequest, res: any) => {
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
-    // res.json({userDetails: userDetails, accessToken: accessToken, refreshToken: refreshToken})
+    } else {
+    res.sendStatus(404);
+  }
+    
   } else {
-    res.send("Error please try again");
+    res.sendStatus(404);
   }
 });
 

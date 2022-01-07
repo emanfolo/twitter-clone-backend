@@ -116,13 +116,13 @@ model Notification {
   recipient   User     @relation("recipient", fields: [recipientID], references: [id])
   type        String
   mentionID   Int?     @unique
-  mention     Mention? @relation(fields: [mentionID], references: [id])
+  mention     Mention? @relation(fields: [mentionID], references: [id], onDelete: Cascade)
   likeID      Int?     @unique
-  like        Like?    @relation(fields: [likeID], references: [id])
+  like        Like?    @relation(fields: [likeID], references: [id], onDelete: Cascade)
   retweetID   Int?     @unique
-  retweet     Retweet? @relation(fields: [retweetID], references: [id])
+  retweet     Retweet? @relation(fields: [retweetID], references: [id], onDelete: Cascade)
   replyID     Int?     @unique
-  reply       Tweet?   @relation(fields: [replyID], references: [id])
+  reply       Tweet?   @relation(fields: [replyID], references: [id], onDelete: Cascade)
   followID    Int?
   follow      User?    @relation("newFollow", fields: [followID], references: [id])
 
