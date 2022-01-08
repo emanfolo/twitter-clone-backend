@@ -90,8 +90,8 @@ router.post("/register", async (req: RegistrationRequest, res: any) => {
           profile: {
             create: {
               bio: "Welcome to flitter",
-              image: null,
-              header_image: null,
+              image: "https://twitter-clone-image-storage.s3.eu-west-2.amazonaws.com/DefaultImage.jpeg",
+              header_image: "https://twitter-clone-image-storage.s3.eu-west-2.amazonaws.com/084f78c13c722c81811f234ce88cd644.png",
             },
           },
         },
